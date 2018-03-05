@@ -8,12 +8,12 @@ login(email, password).then(function(firebaseUserInfo) {
 });
 ```
 
-```json
+```js
 firebaseUserInfo = {
     ...
     "uid": "<uid>",
     ...
-};
+}
 ```
 
 ### Get Accounts
@@ -24,7 +24,7 @@ getAccounts().then(function(accounts) {
 });
 ```
 
-```json
+```js
 accounts = [
     {
         "address": "<address>",
@@ -36,7 +36,7 @@ accounts = [
         "server": "<server>"
     },
     ...
-];
+]
 ```
 
 ### Prepare Transaction
@@ -47,10 +47,10 @@ prepareTransaction(fromAddress, toAddress, assetName, amount).then(function(tran
 });
 ```
 
-```json
+```js
 transactionData = {
     "transactionKey": "<transactionKey>"
-};
+}
 ```
 
 ### Complete Transaction
@@ -69,7 +69,7 @@ getAssetsList().then(function(assetsList) {
 });
 ```
 
-```json
+```js
 assetsList = [
     {
         "name": "<name>",
@@ -77,7 +77,7 @@ assetsList = [
         "server": "<server>",
     },
     ...
-];
+]
 ```
 
 ## Events
@@ -90,7 +90,7 @@ tokiumEvents.on('event-name', function(data) {
 
 ### waiting-transactions-changed
 
-```json
+```js
 data = {
     "transaction_id_1": {
         "amount": "amount",
@@ -107,7 +107,7 @@ data = {
 
 ### accounts-changed
 
-```json
+```js
 data = {
     {
         "address": "<address>",
@@ -119,4 +119,5 @@ data = {
         "server": "<server>"
     },
     ...
+}
 ```
