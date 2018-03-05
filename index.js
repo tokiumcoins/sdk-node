@@ -64,8 +64,6 @@ function listenAccounts() {
 
         completeAccounts(results).then(function(extendedAccounts) {
             tokiumEvents.emit('accounts-changed', extendedAccounts);
-        }).catch(function() {
-            reject('There was an error extracting your accounts.');
         });
     });
 
@@ -236,8 +234,8 @@ function completeTransaction(accountPin, privateKey, transactionKey) {
                 accountPin: accountPin,
                 privateKey: privateKey,
                 transactionKey: transactionKey
-            }).then(function(transactionData) {
-                resolve(transactionData);
+            }).then(function() {
+                resolve();
             }).catch(function(err) {
                 reject(err);
             });
