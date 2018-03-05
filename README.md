@@ -93,13 +93,13 @@ tokiumEvents.on('event-name', function(data) {
 ```js
 data = {
     "transaction_id_1": {
-        "amount": "amount",
-        "asset_name": "asset_name",
-        "from": "from",
-        "fromAddress": "fromAddress",
-        "status": "status",
-        "to": "to",
-        "toAddress": "toAddress"
+        "amount": "<amount>",
+        "asset_name": "<asset_name>",
+        "from": "<from>",
+        "fromAddress": "<fromAddress>",
+        "status": "<status>",
+        "to": "<to>",
+        "toAddress": "<toAddress>"
     },
     ...
 }
