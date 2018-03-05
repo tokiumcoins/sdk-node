@@ -116,7 +116,11 @@ function completeAccounts(accounts) {
         });
 
         Promise.all(promisesArray).then(function() {
-            resolve(accounts);
+            getAccountsBalance(accounts).then(function(accountsWithBalances) {
+                resolve(accountsWithBalances);
+            }).catch(function() {
+                resolve(accounts);
+            });
         }).catch(function() {
             reject('There was an error extracting your accounts.');
         });
@@ -176,6 +180,28 @@ function getUserProfile() {
             }
         }).catch(function(error) {
             console.log('Error getting document:', error);
+        });
+    });
+}
+
+function getAccountsBalance(accounts) {
+    return new Promise(function(resolve, reject) {
+        // Get assets server
+        var promisesArray = [];
+
+        accounts.forEach(function(account, index) {
+            promisesArray.push(TokiumAPI.getAddressBalance(account.server, authToken, {
+                assetName: account.asset_name,
+                address: account.address
+            }).then(function(balanceInfo) {
+                accounts[index].balance = balanceInfo.balance;
+            }));
+        });
+
+        Promise.all(promisesArray).then(function() {
+            resolve(accounts);
+        }).catch(function() {
+            reject('There was an error extracting accounts balances.');
         });
     });
 }
