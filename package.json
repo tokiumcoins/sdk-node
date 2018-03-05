@@ -17,6 +17,7 @@
   },
   "homepage": "https://gitlab.com/Tokium/sdk-node#README",
   "dependencies": {
+    "events": "^2.0.0",
     "node-fetch": "^2.0.0"
   }
 }
