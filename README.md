@@ -108,7 +108,7 @@ data = {
 ### accounts-changed
 
 ```js
-data = {
+data = [
     {
         "address": "<address>",
         "asset_name": "<asset_name>",
@@ -119,5 +119,5 @@ data = {
         "server": "<server>"
     },
     ...
-}
+]
 ```
