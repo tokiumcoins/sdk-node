@@ -26,7 +26,8 @@ module.exports = function(_firebase) {
         newAccount:             newAccount,
         prepareTransaction:     prepareTransaction,
         completeTransaction:    completeTransaction,
-        getAssetsList:          getAssetsList
+        getAssetsList:          getAssetsList,
+        getTransactionsList:    getTransactionsList
     }
 }
 
@@ -312,6 +313,63 @@ function getAssetsList() {
                 assetInfo.name = doc.id;
 
                 return assetInfo;
+            });
+
+            resolve(results);
+        }).catch(function(error) {
+            console.log('Error getting document:', error);
+        });
+    });
+}
+
+function getTransactionsList() {
+    return new Promise(function(resolve, reject) {
+        if (!userSession) {
+            reject('You have to login on your account before.');
+            return;
+        }
+
+        Promise.all([getFromTransactions(), getToTransactions()]).then(function(results) {
+            var [fromTransactions, toTransactions] = results;
+            resolve({
+                sender: fromTransactions,
+                receiver: toTransactions
+            });
+        });
+    });
+}
+
+function getFromTransactions() {
+    return new Promise(function(resolve, reject) {
+        var queryRef = db.collection('transactions')
+                          .where('from', '==', userSession.uid);
+
+        queryRef.get().then(function(querySnapshot) {
+            var results = querySnapshot.docs.map(function(doc) {
+                var transaction = doc.data();
+                transaction.transactionKey = doc.id;
+
+                return transaction;
+            });
+
+            resolve(results);
+        }).catch(function(error) {
+            console.log('Error getting document:', error);
+        });
+    });
+}
+
+function getToTransactions() {
+    return new Promise(function(resolve, reject) {
+        var queryRef = db.collection('transactions')
+                          .where('to', '==', userSession.uid);
+
+        queryRef.get().then(function(querySnapshot) {
+            var results = querySnapshot.docs.map(function(doc) {
+                var transaction = doc.data();
+                transaction.transactionKey = doc.id;
+
+                return transaction;
             });
 
             resolve(results);

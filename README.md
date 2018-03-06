@@ -116,6 +116,45 @@ assetsList = [
 ]
 ```
 
+### Get Transactions List
+
+```js
+getTransactionsList().then(function(transactionsList) {
+    // Do something
+});
+```
+
+```js
+transactionsList = {
+    receiver: [
+        {
+            "transactionKey": <transactionKey>,
+            "amount": "<amount>",
+            "asset_name": "<asset_name>",
+            "from": "<from>",
+            "fromAddress": "<fromAddress>",
+            "status": "<status>",
+            "to": "<to>",
+            "toAddress": "<toAddress>"
+        },
+        ...
+    ],
+    sender: [
+        {
+            "transactionKey": <transactionKey>,
+            "amount": "<amount>",
+            "asset_name": "<asset_name>",
+            "from": "<from>",
+            "fromAddress": "<fromAddress>",
+            "status": "<status>",
+            "to": "<to>",
+            "toAddress": "<toAddress>"
+        },
+        ...
+    ]
+}
+```
+
 ## Events
 
 ```js
