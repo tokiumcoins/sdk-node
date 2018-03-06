@@ -128,7 +128,7 @@ getTransactionsList().then(function(transactionsList) {
 transactionsList = {
     receiver: [
         {
-            "transactionKey": <transactionKey>,
+            "transactionKey": "<transactionKey>",
             "amount": "<amount>",
             "asset_name": "<asset_name>",
             "from": "<from>",
@@ -141,7 +141,7 @@ transactionsList = {
     ],
     sender: [
         {
-            "transactionKey": <transactionKey>,
+            "transactionKey": "<transactionKey>",
             "amount": "<amount>",
             "asset_name": "<asset_name>",
             "from": "<from>",
@@ -168,7 +168,7 @@ tokiumEvents.on('event-name', function(data) {
 ```js
 data = {
     {
-        "transactionKey": <transactionKey>,
+        "transactionKey": "<transactionKey>",
         "amount": "<amount>",
         "asset_name": "<asset_name>",
         "from": "<from>",
