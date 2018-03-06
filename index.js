@@ -21,6 +21,7 @@ module.exports = function(_firebase) {
 
     return {
         login:                  login,
+        getAccount:             getAccount,
         getAccounts:            getAccounts,
         newAccount:             newAccount,
         prepareTransaction:     prepareTransaction,
@@ -99,6 +100,33 @@ function getAccounts() {
             }).catch(function() {
                 reject('There was an error extracting your accounts.');
             });
+        });
+    });
+}
+
+function getAccount(address) {
+    return new Promise(function(resolve, reject) {
+        if (!userSession) {
+            reject('You have to login on your account before.');
+            return;
+        }
+
+        var queryRef = db.collection('asset_accounts')
+                         .where('address', '==', address)
+                         .where('owner', '==', userSession.uid);
+
+        queryRef.get().then(function(querySnapshot) {
+            if (querySnapshot.docs[0]) {
+                var foundAccount = [querySnapshot.docs[0].data()];
+                completeAccounts(foundAccount).then(function(extendedAccounts) {
+                    resolve(extendedAccounts[0]);
+                });
+            } else {
+                reject('Address not found.');
+            }
+        }).catch(function(err) {
+            console.log('Error getting document:', err);
+            reject('There was an error extracting your account.');
         });
     });
 }

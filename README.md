@@ -32,6 +32,26 @@ account = {
 }
 ```
 
+### Get Account
+
+```js
+getAccount(address).then(function(account) {
+    // Do something
+});
+```
+
+```js
+account = {
+    "address": "<address>",
+    "asset_name": "<asset_name>",
+    "balance": "<balance>",
+    "owner": "<owner>",
+    "private_key": "<private_key>",
+    "public_key": "<public_key>",
+    "server": "<server>"
+}
+```
+
 ### Get Accounts
 
 ```js
