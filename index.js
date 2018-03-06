@@ -43,13 +43,14 @@ function listenWaitingTransactions() {
 
 
     var observer = query.onSnapshot(querySnapshot => {
-        var transactions = {};
+        var results = querySnapshot.docs.map(function(doc) {
+            var transaction = doc.data();
+            transaction.transactionKey = doc.id;
 
-        querySnapshot.forEach(doc => {
-            transactions[doc.id] = doc.data();
+            return transaction;
         });
 
-        tokiumEvents.emit('waiting-transactions-changed', transactions);
+        tokiumEvents.emit('waiting-transactions-changed', results);
     });
 
     return observer;

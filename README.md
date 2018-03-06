@@ -167,7 +167,8 @@ tokiumEvents.on('event-name', function(data) {
 
 ```js
 data = {
-    "transaction_id_1": {
+    {
+        "transactionKey": <transactionKey>,
         "amount": "<amount>",
         "asset_name": "<asset_name>",
         "from": "<from>",
