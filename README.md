@@ -16,6 +16,22 @@ firebaseUserInfo = {
 }
 ```
 
+### New Account
+
+```js
+newAccount(assetName, accountPin).then(function(account) {
+    // Do something
+});
+```
+
+```js
+account = {
+    address: <address>,
+    privateKey: <privkey>,
+    assetName: <assetName>
+}
+```
+
 ### Get Accounts
 
 ```js
