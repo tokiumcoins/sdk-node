@@ -16,6 +16,14 @@ firebaseUserInfo = {
 }
 ```
 
+### Logout
+
+```js
+logout().then(function() {
+    // Do something
+});
+```
+
 ### New Account
 
 ```js

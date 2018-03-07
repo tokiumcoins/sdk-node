@@ -21,6 +21,7 @@ module.exports = function(_firebase) {
 
     return {
         login:                  login,
+        logout:                 logout,
         getAccount:             getAccount,
         getAccounts:            getAccounts,
         newAccount:             newAccount,
@@ -83,6 +84,27 @@ function login(email, password) {
 
                 resolve(firebaseUserInfo);
             });
+        }).catch(function(err) {
+            reject(err.message);
+        });
+    });
+}
+
+function logout() {
+    return new Promise(function(resolve, reject) {
+        if (!userSession) {
+            reject('You have to login on your account before.');
+            return;
+        }
+
+        firebase.auth().signOut().then(function() {
+            // Clear user listeners.
+            eventListeners.forEach(function(eventListener) {
+                eventListener();
+            });
+            eventListeners = [];
+
+            resolve();
         }).catch(function(err) {
             reject(err.message);
         });
