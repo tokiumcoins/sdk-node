@@ -115,7 +115,7 @@ getAssetsList(options).then(function(assetsList) {
 
 ```js
 options = {
-    "onlyMyAssets": 
+    "onlyMyAssets": "boolean"
 }
 ```
 
