@@ -321,14 +321,16 @@ function completeTransaction(accountPin, privateKey, transactionKey) {
     });
 }
 
-function getAssetsList() {
+function getAssetsList(options) {
     return new Promise(function(resolve, reject) {
         if (!userSession) {
             reject('You have to login on your account before.');
             return;
         }
 
-        var queryRef = db.collection('assets');
+        options = options || {};
+
+        var queryRef = !options.onlyMyAssets ? db.collection('assets') : db.collection('assets').where('owner', '==', userSession.uid);
 
         queryRef.get().then(function(querySnapshot) {
             var results = querySnapshot.docs.map(function(doc) {

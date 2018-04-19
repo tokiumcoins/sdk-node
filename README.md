@@ -108,9 +108,15 @@ completeTransaction(accountPin, privateKey, transactionKey).then(function() {
 ### Get Assets List
 
 ```js
-getAssetsList().then(function(assetsList) {
+getAssetsList(options).then(function(assetsList) {
     // Do something
 });
+```
+
+```js
+options = {
+    "onlyMyAssets": 
+}
 ```
 
 ```js
