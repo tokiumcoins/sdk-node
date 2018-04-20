@@ -24,6 +24,12 @@ logout().then(function() {
 });
 ```
 
+### Is Logged In
+
+```js
+var isLoggedIn = isLoggedIn(); // true or false
+```
+
 ### New Account
 
 ```js

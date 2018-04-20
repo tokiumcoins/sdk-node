@@ -22,6 +22,7 @@ module.exports = function(_firebase) {
     return {
         login:                  login,
         logout:                 logout,
+        isLoggedIn:             isLoggedIn,
         getAccount:             getAccount,
         getAccounts:            getAccounts,
         newAccount:             newAccount,
@@ -30,6 +31,10 @@ module.exports = function(_firebase) {
         getAssetsList:          getAssetsList,
         getTransactionsList:    getTransactionsList
     }
+}
+
+function isLoggedIn() {
+    return (!userSession || !authToken) ? false : true;
 }
 
 function startListeners() {
