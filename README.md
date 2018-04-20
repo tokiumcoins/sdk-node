@@ -111,6 +111,14 @@ completeTransaction(accountPin, privateKey, transactionKey).then(function() {
 });
 ```
 
+### Request asset
+
+```js
+requestAsset(assetName, assetImage, amount).then(function() {
+    // Do something
+});
+```
+
 ### Get Assets List
 
 ```js

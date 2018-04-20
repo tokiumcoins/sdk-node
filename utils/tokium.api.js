@@ -100,6 +100,32 @@ function completeTransaction(host, authToken, data) {
     });
 }
 
+function requestAsset(host, authToken, data) {
+    return new Promise(function(resolve, reject) {
+        if (!data.assetName || !data.assetImage || !data.amount) {
+            reject('Empty params.');
+            return;
+        }
+
+        var uri = host + '/asset/request';
+
+        post(authToken, uri, {
+            assetName:  data.assetName,
+            assetImage: data.assetImage,
+            amount:     data.amount
+        }).then(function(result) {
+            if (!result.success) {
+                reject(result.message);
+                return;
+            }
+
+            resolve(result.data);
+        }).catch(function() {
+            reject('There was an error requesting to tokium API.');
+        });
+    });
+}
+
 function get(authToken, uri) {
     return new Promise(function(resolve, reject) {
         var options = {
@@ -152,5 +178,6 @@ module.exports = {
     newAddress: newAddress,
     getAddressBalance: getAddressBalance,
     prepareTransaction: prepareTransaction,
-    completeTransaction: completeTransaction
+    completeTransaction: completeTransaction,
+    requestAsset: requestAsset
 }

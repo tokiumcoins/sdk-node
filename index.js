@@ -2,6 +2,7 @@ const events = require('events');
 global.tokiumEvents = global.tokiumEvents || new events.EventEmitter();
 
 const TokiumAPI = require('./utils/tokium.api.js');
+const SERVER_FOR_NEW_ASSETS = 'https://blockchain-token.herokuapp.com';
 
 var firebase = null;
 var db = null;
@@ -29,7 +30,8 @@ module.exports = function(_firebase) {
         prepareTransaction:     prepareTransaction,
         completeTransaction:    completeTransaction,
         getAssetsList:          getAssetsList,
-        getTransactionsList:    getTransactionsList
+        getTransactionsList:    getTransactionsList,
+        requestAsset:           requestAsset
     }
 }
 
@@ -322,6 +324,25 @@ function completeTransaction(accountPin, privateKey, transactionKey) {
             }).catch(function(err) {
                 reject(err);
             });
+        });
+    });
+}
+
+function requestAsset(assetName, assetImage, amount) {
+    return new Promise(function(resolve, reject) {
+        if (!userSession) {
+            reject('You have to login on your account before.');
+            return;
+        }
+
+        TokiumAPI.requestAsset(SERVER_FOR_NEW_ASSETS, authToken, {
+            assetName:  assetName,
+            assetImage: assetImage,
+            amount:     amount
+        }).then(function() {
+            resolve();
+        }).catch(function(err) {
+            reject(err);
         });
     });
 }
