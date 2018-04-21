@@ -134,13 +134,14 @@ function get(authToken, uri) {
             }
         };
 
-        fetch(uri, options)
-            .then(res => res.json())
-            .then(json => resolve(json))
-            .catch((err) => {
-                console.info(err);
-                resolve(err);
-            });
+        fetch(uri, options).then(function(res) {
+            res.json();
+        }).then(function(json) {
+            resolve(json);
+        }).catch(function(err) {
+            console.info(err);
+            resolve(err);
+        });
     });
 }
 
@@ -155,13 +156,14 @@ function post(authToken, uri, body) {
             body: JSON.stringify(body)
         };
 
-        fetch(uri, options)
-            .then(res => res.json())
-            .then(json => resolve(json))
-            .catch((err) => {
-                console.info(err);
-                resolve(err);
-            });
+        fetch(uri, options).then(function(res) {
+            res.json();
+        }).then(function(json) {
+            resolve(json);
+        }).catch(function(err) {
+            console.info(err);
+            resolve(err);
+        });
     });
 }
 

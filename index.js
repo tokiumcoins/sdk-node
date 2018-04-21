@@ -50,7 +50,7 @@ function listenWaitingTransactions() {
                   .where('status', '==', 'waiting');
 
 
-    var observer = query.onSnapshot(querySnapshot => {
+    var observer = query.onSnapshot(function(querySnapshot) {
         var results = querySnapshot.docs.map(function(doc) {
             var transaction = doc.data();
             transaction.transactionKey = doc.id;
@@ -68,7 +68,7 @@ function listenAccounts() {
     var query = db.collection('asset_accounts')
                   .where('owner', '==', userSession.uid);
 
-    var observer = query.onSnapshot(querySnapshot => {
+    var observer = query.onSnapshot(function(querySnapshot) {
         var results = querySnapshot.docs.map(function(doc) {
           return doc.data();
         });
@@ -381,7 +381,9 @@ function getTransactionsList() {
         }
 
         Promise.all([getFromTransactions(), getToTransactions()]).then(function(results) {
-            var [fromTransactions, toTransactions] = results;
+            var fromTransactions = results[0];
+            var toTransactions = results[1];
+
             resolve({
                 sender: fromTransactions,
                 receiver: toTransactions
