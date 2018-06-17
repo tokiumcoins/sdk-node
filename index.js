@@ -1,42 +1,44 @@
+const firebase = require('firebase');
+
 const events = require('events');
 global.tokiumEvents = global.tokiumEvents || new events.EventEmitter();
 
 const TokiumAPI = require('./utils/tokium.api.js');
 const SERVER_FOR_NEW_ASSETS = 'https://blockchain-token.herokuapp.com';
 
-var firebase = null;
-var db = null;
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyASn4mvQQjAAe5IvsWYEUQcI1odtUsIZHU",
+  authDomain: "blockchain-tokens.firebaseapp.com",
+  databaseURL: "https://blockchain-tokens.firebaseio.com",
+  projectId: "blockchain-tokens",
+  storageBucket: "blockchain-tokens.appspot.com",
+  messagingSenderId: "401039270457"
+};
+
 var userSession = null;
 var authToken = null;
 
 var eventListeners = [];
 
-module.exports = function(_firebase) {
-    if (!_firebase) {
-        console.error('Tokium SDK can\'t be used without a valid firebase instance.');
-        return;
-    }
+// Init Firebase and Firestore
+firebase.initializeApp(FIREBASE_CONFIG)
+const db = firebase.firestore();
+const settings = { timestampsInSnapshots: true };
+db.settings(settings);
 
-    firebase = _firebase;
-    db = _firebase.firestore();
-
-    const settings = { timestampsInSnapshots: true };
-    db.settings(settings);
-
-    return {
-        login:                  login,
-        logout:                 logout,
-        isLoggedIn:             isLoggedIn,
-        getAccount:             getAccount,
-        getAccounts:            getAccounts,
-        newAccount:             newAccount,
-        prepareTransaction:     prepareTransaction,
-        completeTransaction:    completeTransaction,
-        getAssetsList:          getAssetsList,
-        getTransactionsList:    getTransactionsList,
-        requestAsset:           requestAsset
-    }
-}
+module.exports = {
+    login,
+    logout,
+    isLoggedIn,
+    getAccount,
+    getAccounts,
+    newAccount,
+    prepareTransaction,
+    completeTransaction,
+    getAssetsList,
+    getTransactionsList,
+    requestAsset
+};
 
 function isLoggedIn() {
     return (!userSession || !authToken) ? false : true;
