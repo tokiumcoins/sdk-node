@@ -20,6 +20,9 @@ module.exports = function(_firebase) {
     firebase = _firebase;
     db = _firebase.firestore();
 
+    const settings = { timestampsInSnapshots: true };
+    db.settings(settings);
+
     return {
         login:                  login,
         logout:                 logout,
@@ -84,8 +87,8 @@ function listenAccounts() {
 function login(email, password) {
     return new Promise(function(resolve, reject) {
         firebase.auth().signInWithEmailAndPassword(email, password).then(function(firebaseUserInfo) {
-            firebaseUserInfo.getIdToken().then(function(token) {
-                userSession = firebaseUserInfo;
+            firebase.auth().currentUser.getIdToken().then(function(token) {
+                userSession = firebase.auth().currentUser;
                 authToken = token;
                 startListeners();
 
