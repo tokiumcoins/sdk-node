@@ -27,17 +27,17 @@ const settings = { timestampsInSnapshots: true };
 db.settings(settings);
 
 module.exports = {
-    login,
-    logout,
-    isLoggedIn,
-    getAccount,
-    getAccounts,
-    newAccount,
-    prepareTransaction,
-    completeTransaction,
-    getAssetsList,
-    getTransactionsList,
-    requestAsset
+    login: login,
+    logout: logout,
+    isLoggedIn: isLoggedIn,
+    getAccount: getAccount,
+    getAccounts: getAccounts,
+    newAccount: newAccount,
+    prepareTransaction: prepareTransaction,
+    completeTransaction: completeTransaction,
+    getAssetsList: getAssetsList,
+    getTransactionsList: getTransactionsList,
+    requestAsset: requestAsset
 };
 
 function isLoggedIn() {
