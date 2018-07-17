@@ -1,6 +1,6 @@
 const _fetch = fetch || require('node-fetch');
 
-let authorizationToken = null;
+var authorizationToken = null;
 
 function walletCreate(host, data) {
     return new Promise(function(resolve, reject) {

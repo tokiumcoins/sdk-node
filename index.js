@@ -15,9 +15,9 @@ const FIREBASE_CONFIG = {
     messagingSenderId: "401039270457"
 };
 
-let userSession = null;
+var userSession = null;
 
-let eventListeners = [];
+var eventListeners = [];
 
 // Init Firebase and Firestore
 firebase.initializeApp(FIREBASE_CONFIG);
