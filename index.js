@@ -7,21 +7,20 @@ const TokiumAPI = require('./utils/tokium.api.js');
 const SERVER_FOR_NEW_ASSETS = 'https://blockchain-token.herokuapp.com';
 
 const FIREBASE_CONFIG = {
-  apiKey: "AIzaSyASn4mvQQjAAe5IvsWYEUQcI1odtUsIZHU",
-  authDomain: "blockchain-tokens.firebaseapp.com",
-  databaseURL: "https://blockchain-tokens.firebaseio.com",
-  projectId: "blockchain-tokens",
-  storageBucket: "blockchain-tokens.appspot.com",
-  messagingSenderId: "401039270457"
+    apiKey: "AIzaSyASn4mvQQjAAe5IvsWYEUQcI1odtUsIZHU",
+    authDomain: "blockchain-tokens.firebaseapp.com",
+    databaseURL: "https://blockchain-tokens.firebaseio.com",
+    projectId: "blockchain-tokens",
+    storageBucket: "blockchain-tokens.appspot.com",
+    messagingSenderId: "401039270457"
 };
 
-var userSession = null;
-var authToken = null;
+let userSession = null;
 
-var eventListeners = [];
+let eventListeners = [];
 
 // Init Firebase and Firestore
-firebase.initializeApp(FIREBASE_CONFIG)
+firebase.initializeApp(FIREBASE_CONFIG);
 const db = firebase.firestore();
 const settings = { timestampsInSnapshots: true };
 db.settings(settings);
@@ -30,23 +29,23 @@ module.exports = {
     login: login,
     logout: logout,
     isLoggedIn: isLoggedIn,
-    getAccount: getAccount,
-    getAccounts: getAccounts,
-    newAccount: newAccount,
-    prepareTransaction: prepareTransaction,
-    completeTransaction: completeTransaction,
+    getWallet: getWallet,
+    getWallets: getWallets,
+    newWallet: newWallet,
+    requestTransaction: requestTransaction,
+    sendTransaction: sendTransaction,
     getAssetsList: getAssetsList,
     getTransactionsList: getTransactionsList,
-    requestAsset: requestAsset
+    createAsset: createAsset
 };
 
 function isLoggedIn() {
-    return (!userSession || !authToken) ? false : true;
+    return (!userSession) ? false : true;
 }
 
 function startListeners() {
     eventListeners.push(listenWaitingTransactions());
-    eventListeners.push(listenAccounts());
+    eventListeners.push(listenWallets());
 }
 
 function listenWaitingTransactions() {
@@ -69,7 +68,7 @@ function listenWaitingTransactions() {
     return observer;
 }
 
-function listenAccounts() {
+function listenWallets() {
     var query = db.collection('asset_accounts')
                   .where('owner', '==', userSession.uid);
 
@@ -78,8 +77,8 @@ function listenAccounts() {
           return doc.data();
         });
 
-        completeAccounts(results).then(function(extendedAccounts) {
-            tokiumEvents.emit('accounts-changed', extendedAccounts);
+        completeWallets(results).then(function(extendedWallets) {
+            tokiumEvents.emit('wallets-changed', extendedWallets);
         });
     });
 
@@ -91,8 +90,10 @@ function login(email, password) {
         firebase.auth().signInWithEmailAndPassword(email, password).then(function(firebaseUserInfo) {
             firebase.auth().currentUser.getIdToken().then(function(token) {
                 userSession = firebase.auth().currentUser;
-                authToken = token;
                 startListeners();
+
+                // Set authToken on Tokium API.
+                TokiumAPI.setAuthToken(token);
 
                 resolve(firebaseUserInfo);
             });
@@ -116,6 +117,8 @@ function logout() {
             });
             eventListeners = [];
 
+            userSession = null;
+
             resolve();
         }).catch(function(err) {
             reject(err.message);
@@ -123,24 +126,24 @@ function logout() {
     });
 }
 
-function getAccounts() {
+function getWallets() {
     return new Promise(function(resolve, reject) {
         if (!userSession) {
             reject('You have to login on your account before.');
             return;
         }
 
-        getUserAssetAccounts().then(function(assetAccounts) {
-            completeAccounts(assetAccounts).then(function(extendedAccounts) {
-                resolve(extendedAccounts);
+        getUserAssetWallets().then(function(assetWallets) {
+            completeWallets(assetWallets).then(function(extendedWallets) {
+                resolve(extendedWallets);
             }).catch(function() {
-                reject('There was an error extracting your accounts.');
+                reject('There was an error extracting your wallets.');
             });
         });
     });
 }
 
-function getAccount(address) {
+function getWallet(address) {
     return new Promise(function(resolve, reject) {
         if (!userSession) {
             reject('You have to login on your account before.');
@@ -153,48 +156,49 @@ function getAccount(address) {
 
         queryRef.get().then(function(querySnapshot) {
             if (querySnapshot.docs[0]) {
-                var foundAccount = [querySnapshot.docs[0].data()];
-                completeAccounts(foundAccount).then(function(extendedAccounts) {
-                    resolve(extendedAccounts[0]);
+                var foundWallet = [querySnapshot.docs[0].data()];
+                completeWallets(foundWallet).then(function(extendedWallets) {
+                    resolve(extendedWallets[0]);
                 });
             } else {
-                reject('Address not found.');
+                reject('Wallet not found.');
             }
         }).catch(function(err) {
             console.log('Error getting document:', err);
-            reject('There was an error extracting your account.');
+            reject('There was an error finding the wallet.');
         });
     });
 }
 
-function completeAccounts(accounts) {
+function completeWallets(wallets) {
     return new Promise(function(resolve, reject) {
         // Get assets server
         var promisesArray = [];
 
-        accounts.forEach(function(account, index) {
-            promisesArray.push(getAssetInfo(account.asset_name).then(function(assetInfo) {
-                accounts[index].server = assetInfo.server;
-                accounts[index].balance = '...';
+        wallets.forEach(function(wallet, index) {
+            promisesArray.push(getAssetInfo(wallet.asset_name).then(function(assetInfo) {
+                wallets[index].server = assetInfo ? assetInfo.server : null;
+                wallets[index].balance = '...';
             }));
         });
 
         Promise.all(promisesArray).then(function() {
-            getAccountsBalance(accounts).then(function(accountsWithBalances) {
-                resolve(accountsWithBalances);
+            getWalletsBalance(wallets).then(function(walletsWithBalances) {
+                resolve(walletsWithBalances);
             }).catch(function() {
-                resolve(accounts);
+                resolve(wallets);
             });
-        }).catch(function() {
-            reject('There was an error extracting your accounts.');
+        }, function(err) {
+            console.error(err);
+            reject('There was an error completing your wallets info.');
         });
     });
 }
 
 /**
-  Get user asset accounts from 'asset_accounts' firebase collection
+  Get user asset wallets from 'asset_accounts' firebase collection
 **/
-function getUserAssetAccounts() {
+function getUserAssetWallets() {
     return new Promise(function(resolve, reject) {
         var queryRef = db.collection('asset_accounts').where('owner', '==', userSession.uid);
 
@@ -221,10 +225,10 @@ function getAssetInfo(assetName) {
             if (doc.exists) {
                 resolve(doc.data());
             } else {
-                reject();
+                resolve();
             }
-        }).catch(function(error) {
-            console.log('Error getting document:', error);
+        }).catch(function(err) {
+            console.error('Error getting document:', err);
         });
     });
 }
@@ -248,29 +252,31 @@ function getUserProfile() {
     });
 }
 
-function getAccountsBalance(accounts) {
+function getWalletsBalance(wallets) {
     return new Promise(function(resolve, reject) {
         // Get assets server
         var promisesArray = [];
 
-        accounts.forEach(function(account, index) {
-            promisesArray.push(TokiumAPI.getAddressBalance(account.server, authToken, {
-                assetName: account.asset_name,
-                address: account.address
+        wallets.forEach(function(wallet, index) {
+            if (!wallet.server) return wallets[index].balance = 'NaN';
+
+            promisesArray.push(TokiumAPI.walletBalance(wallet.server, {
+                assetName: wallet.asset_name,
+                address: wallet.address
             }).then(function(balanceInfo) {
-                accounts[index].balance = balanceInfo.balance;
+                wallets[index].balance = balanceInfo.balance;
             }));
         });
 
         Promise.all(promisesArray).then(function() {
-            resolve(accounts);
+            resolve(wallets);
         }).catch(function() {
-            reject('There was an error extracting accounts balances.');
+            reject('There was an error extracting wallets balances.');
         });
     });
 }
 
-function newAccount(assetName, accountPin) {
+function newWallet(assetName, accountPin) {
     return new Promise(function(resolve, reject) {
         if (!userSession) {
             reject('You have to login on your account before.');
@@ -278,11 +284,11 @@ function newAccount(assetName, accountPin) {
         }
 
         getAssetInfo(assetName).then(function(assetInfo) {
-            TokiumAPI.newAddress(assetInfo.server, authToken, {
+            TokiumAPI.walletCreate(assetInfo.server, {
                 assetName: assetName,
                 accountPin: accountPin
-            }).then(function(account) {
-                resolve(account);
+            }).then(function(wallet) {
+                resolve(wallet);
             }).catch(function(err) {
                 reject(err);
             });
@@ -290,7 +296,7 @@ function newAccount(assetName, accountPin) {
     });
 }
 
-function prepareTransaction(fromAddress, toAddress, assetName, amount) {
+function requestTransaction(fromAddress, toAddress, assetName, amount) {
     return new Promise(function(resolve, reject) {
         if (!userSession) {
             reject('You have to login on your account before.');
@@ -298,7 +304,7 @@ function prepareTransaction(fromAddress, toAddress, assetName, amount) {
         }
 
         getAssetInfo(assetName).then(function(assetInfo) {
-            TokiumAPI.prepareTransaction(assetInfo.server, authToken, {
+            TokiumAPI.transactionRequest(assetInfo.server, {
                 fromAddress: fromAddress,
                 toAddress: toAddress,
                 assetName: assetName,
@@ -312,7 +318,7 @@ function prepareTransaction(fromAddress, toAddress, assetName, amount) {
     });
 }
 
-function completeTransaction(accountPin, privateKey, transactionKey) {
+function sendTransaction(accountPin, privateKey, transactionKey) {
     return new Promise(function(resolve, reject) {
         if (!userSession) {
             reject('You have to login on your account before.');
@@ -320,10 +326,11 @@ function completeTransaction(accountPin, privateKey, transactionKey) {
         }
 
         getAssetInfo(assetName).then(function(assetInfo) {
-            TokiumAPI.completeTransaction(assetInfo.server, authToken, {
+            TokiumAPI.transactionInitImplicit(assetInfo.server, {
                 accountPin: accountPin,
                 privateKey: privateKey,
-                transactionKey: transactionKey
+                transactionKey: transactionKey,
+                signOnline: true
             }).then(function() {
                 resolve();
             }).catch(function(err) {
@@ -333,14 +340,14 @@ function completeTransaction(accountPin, privateKey, transactionKey) {
     });
 }
 
-function requestAsset(assetName, assetImage, amount) {
+function createAsset(assetName, assetImage, amount) {
     return new Promise(function(resolve, reject) {
         if (!userSession) {
             reject('You have to login on your account before.');
             return;
         }
 
-        TokiumAPI.requestAsset(SERVER_FOR_NEW_ASSETS, authToken, {
+        TokiumAPI.assetCreate(SERVER_FOR_NEW_ASSETS, {
             assetName:  assetName,
             assetImage: assetImage,
             amount:     amount

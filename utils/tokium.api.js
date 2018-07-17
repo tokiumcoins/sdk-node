@@ -1,18 +1,17 @@
-var fetch = fetch || require('node-fetch');
+const _fetch = fetch || require('node-fetch');
 
-function newAddress(host, authToken, data) {
+let authorizationToken = null;
+
+function walletCreate(host, data) {
     return new Promise(function(resolve, reject) {
         if (!data.assetName || !data.accountPin) {
             reject('Empty params.');
             return;
         }
 
-        var uri = host + '/address/new';
+        var uri = host + '/wallet/create';
 
-        post(authToken, uri, {
-            assetName: data.assetName,
-            accountPin: data.accountPin
-        }).then(function(result) {
+        post(uri, data).then(function(result) {
             if (!result.success) {
                 reject(result.message);
                 return;
@@ -25,16 +24,16 @@ function newAddress(host, authToken, data) {
     });
 }
 
-function getAddressBalance(host, authToken, data) {
+function walletBalance(host, data) {
     return new Promise(function(resolve, reject) {
         if (!data.assetName || !data.address) {
             reject('Empty params.');
             return;
         }
 
-        var uri = host + '/balance/' + data.assetName + '/' + data.address;
+        var uri = host + '/wallet/balance/' + data.assetName + '/' + data.address;
 
-        get(authToken, uri).then(function(result) {
+        get(uri).then(function(result) {
             if (!result.success) {
                 reject(result.message);
                 return;
@@ -47,21 +46,16 @@ function getAddressBalance(host, authToken, data) {
     });
 }
 
-function prepareTransaction(host, authToken, data) {
+function transactionRequest(host, data) {
     return new Promise(function(resolve, reject) {
         if (!data.fromAddress || !data.toAddress || !data.assetName || !data.amount) {
             reject('Empty params.');
             return;
         }
 
-        var uri = host + '/transaction/prepare';
+        var uri = host + '/transaction/request';
 
-        post(authToken, uri, {
-            fromAddress: data.fromAddress,
-            toAddress: data.toAddress,
-            assetName: data.assetName,
-            amount: data.amount
-        }).then(function(result) {
+        post(uri, data).then(function(result) {
             if (!result.success) {
                 reject(result.message);
                 return;
@@ -74,20 +68,21 @@ function prepareTransaction(host, authToken, data) {
     });
 }
 
-function completeTransaction(host, authToken, data) {
+function transactionInitExplicit(host, data) {
     return new Promise(function(resolve, reject) {
-        if (!data.accountPin || !data.privateKey || !data.transactionKey) {
+        if (!data.transactionInfo || !data.signOnline) {
             reject('Empty params.');
             return;
         }
 
-        var uri = host + '/transaction/complete';
+        if (!data.transactionInfo.fromAddress || !data.transactionInfo.toAddress || !data.transactionInfo.assetName || !data.transactionInfo.amount) {
+            reject('Invalid transaction info.');
+            return;
+        }
 
-        post(authToken, uri, {
-            accountPin: data.accountPin,
-            privateKey: data.privateKey,
-            transactionKey: data.transactionKey
-        }).then(function(result) {
+        var uri = host + '/transaction/init';
+
+        post(uri, data).then(function(result) {
             if (!result.success) {
                 reject(result.message);
                 return;
@@ -100,20 +95,16 @@ function completeTransaction(host, authToken, data) {
     });
 }
 
-function requestAsset(host, authToken, data) {
+function transactionInitImplicit(host, data) {
     return new Promise(function(resolve, reject) {
-        if (!data.assetName || !data.assetImage || !data.amount) {
+        if (!data.transactionKey || !data.signOnline) {
             reject('Empty params.');
             return;
         }
 
-        var uri = host + '/asset/request';
+        var uri = host + '/transaction/init';
 
-        post(authToken, uri, {
-            assetName:  data.assetName,
-            assetImage: data.assetImage,
-            amount:     data.amount
-        }).then(function(result) {
+        post(uri, data).then(function(result) {
             if (!result.success) {
                 reject(result.message);
                 return;
@@ -126,42 +117,85 @@ function requestAsset(host, authToken, data) {
     });
 }
 
-function get(authToken, uri) {
+function transactionSend(host, data) {
+    return new Promise(function(resolve, reject) {
+        if (!data.transactionKey || !data.signedTxHex) {
+            reject('Empty params.');
+            return;
+        }
+
+        var uri = host + '/transaction/send';
+
+        post(uri, data).then(function(result) {
+            if (!result.success) {
+                reject(result.message);
+                return;
+            }
+
+            resolve(result.data);
+        }).catch(function() {
+            reject('There was an error requesting to tokium API.');
+        });
+    });
+}
+
+function assetCreate(host, data) {
+    return new Promise(function(resolve, reject) {
+        if (!data.assetName || !data.amount || !data.assetImage) {
+            reject('Empty params.');
+            return;
+        }
+
+        var uri = host + '/asset/create';
+
+        post(uri, data).then(function(result) {
+            if (!result.success) {
+                reject(result.message);
+                return;
+            }
+
+            resolve(result.data);
+        }).catch(function() {
+            reject('There was an error requesting to tokium API.');
+        });
+    });
+}
+
+function get(uri) {
     return new Promise(function(resolve, reject) {
         var options = {
             headers: {
-                authToken: authToken
+                authToken: authorizationToken
             }
         };
 
-        fetch(uri, options).then(function(res) {
+        _fetch(uri, options).then(function(res) {
             res.json();
         }).then(function(json) {
             resolve(json);
         }).catch(function(err) {
-            console.info(err);
             resolve(err);
         });
     });
 }
 
-function post(authToken, uri, body) {
+function post(uri, body) {
     return new Promise(function(resolve, reject) {
         var options = {
             method: 'POST',
             headers: {
-                authToken: authToken,
+                authToken: authorizationToken,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(body)
         };
 
-        fetch(uri, options).then(function(res) {
+        _fetch(uri, options).then(function(res) {
             res.json();
         }).then(function(json) {
             resolve(json);
         }).catch(function(err) {
-            console.info(err);
+            console.error(err);
             resolve(err);
         });
     });
@@ -176,10 +210,16 @@ function isJson(str) {
     return true;
 }
 
+function setAuthToken(authToken) {
+    authorizationToken = authToken;
+}
+
 module.exports = {
-    newAddress: newAddress,
-    getAddressBalance: getAddressBalance,
-    prepareTransaction: prepareTransaction,
-    completeTransaction: completeTransaction,
-    requestAsset: requestAsset
+    walletCreate:            walletCreate,
+    walletBalance:           walletBalance,
+    transactionRequest:      transactionRequest,
+    transactionInitExplicit: transactionInitExplicit,
+    transactionInitImplicit: transactionInitImplicit,
+    assetCreate:             assetCreate,
+    setAuthToken:            setAuthToken
 }
