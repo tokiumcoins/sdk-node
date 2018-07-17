@@ -170,7 +170,7 @@ function get(uri) {
         };
 
         _fetch(uri, options).then(function(res) {
-            res.text().then(text => {
+            res.text().then(function(text) {
                 resolve(JSON.parse(text));
             });
         }).catch(function(err) {
