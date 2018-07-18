@@ -1,4 +1,4 @@
-const _fetch = fetch || require('node-fetch');
+var fetch = require('node-fetch');
 
 var authorizationToken = null;
 
@@ -169,7 +169,7 @@ function get(uri) {
             }
         };
 
-        _fetch(uri, options).then(function(res) {
+        fetch(uri, options).then(function(res) {
             res.text().then(function(text) {
                 resolve(JSON.parse(text));
             });
@@ -190,7 +190,7 @@ function post(uri, body) {
             body: JSON.stringify(body)
         };
 
-        _fetch(uri, options).then(function(res) {
+        fetch(uri, options).then(function(res) {
             res.json();
         }).then(function(json) {
             resolve(json);

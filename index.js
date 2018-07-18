@@ -1,4 +1,5 @@
 const firebase = require('firebase');
+require('firebase/firestore');
 
 const events = require('events');
 global.tokiumEvents = global.tokiumEvents || new events.EventEmitter();

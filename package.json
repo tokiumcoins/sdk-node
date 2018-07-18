@@ -18,6 +18,7 @@
   "homepage": "https://gitlab.com/Tokium/sdk-node#README",
   "dependencies": {
     "events": "^2.0.0",
-    "firebase": "^5.0.4"
+    "firebase": "^5.0.4",
+    "node-fetch": "^2.1.2"
   }
 }
