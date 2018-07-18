@@ -191,11 +191,10 @@ function post(uri, body) {
         };
 
         fetch(uri, options).then(function(res) {
-            res.json();
-        }).then(function(json) {
-            resolve(json);
+            res.text().then(function(text) {
+                resolve(JSON.parse(text));
+            });
         }).catch(function(err) {
-            console.error(err);
             resolve(err);
         });
     });
