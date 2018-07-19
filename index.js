@@ -179,6 +179,7 @@ function completeWallets(wallets) {
         wallets.forEach(function(wallet, index) {
             promisesArray.push(getAssetInfo(wallet.asset_name).then(function(assetInfo) {
                 wallets[index].server = assetInfo ? assetInfo.server : null;
+                wallets[index].image = assetInfo ? assetInfo.image : '';
                 wallets[index].balance = '...';
             }));
         });
