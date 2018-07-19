@@ -326,16 +326,19 @@ function sendTransaction(accountPin, privateKey, transactionKey) {
             return;
         }
 
-        getAssetInfo(assetName).then(function(assetInfo) {
-            TokiumAPI.transactionInitImplicit(assetInfo.server, {
-                accountPin: accountPin,
-                privateKey: privateKey,
-                transactionKey: transactionKey,
-                signOnline: true
-            }).then(function() {
-                resolve();
-            }).catch(function(err) {
-                reject(err);
+        getTransaction(transactionKey).then(function(transactionInfo) {
+            getAssetInfo(transactionInfo.asset_name).then(function(assetInfo) {
+                TokiumAPI.transactionInitImplicit(assetInfo.server, {
+                    accountPin: accountPin,
+                    privateKey: privateKey,
+                    transactionKey: transactionKey,
+                    signOnline: true
+                }).then(function(result) {
+                    resolve(result);
+                }).catch(function(err) {
+                    console.error(err);
+                    reject(err);
+                });
             });
         });
     });
@@ -401,6 +404,22 @@ function getTransactionsList() {
                 sender: fromTransactions,
                 receiver: toTransactions
             });
+        });
+    });
+}
+
+function getTransaction(transactionKey) {
+    return new Promise(function(resolve, reject) {
+        var docRef = db.collection('transactions').doc(transactionKey);
+
+        docRef.get().then(function(doc) {
+            if (doc.exists) {
+                resolve(doc.data());
+            } else {
+                reject();
+            }
+        }).catch(function(error) {
+            console.log('Error getting document:', error);
         });
     });
 }
