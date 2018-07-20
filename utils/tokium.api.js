@@ -70,7 +70,7 @@ function transactionRequest(host, data) {
 
 function transactionInitExplicit(host, data) {
     return new Promise(function(resolve, reject) {
-        if (!data.transactionInfo || !data.signOnline) {
+        if (!data.transactionInfo || data.signOnline === undefined) {
             reject('Empty params.');
             return;
         }
@@ -97,7 +97,7 @@ function transactionInitExplicit(host, data) {
 
 function transactionInitImplicit(host, data) {
     return new Promise(function(resolve, reject) {
-        if (!data.transactionKey || !data.signOnline) {
+        if (!data.transactionKey || data.signOnline === undefined) {
             reject('Empty params.');
             return;
         }
