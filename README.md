@@ -33,7 +33,7 @@ var isLoggedIn = isLoggedIn(); // true or false
 ### New Account
 
 ```js
-newAccount(assetName, accountPin).then(function(account) {
+newAccount(assetName, walletPin).then(function(account) {
     // Do something
 });
 ```
@@ -106,7 +106,7 @@ transactionData = {
 ### Complete Transaction
 
 ```js
-completeTransaction(accountPin, privateKey, transactionKey).then(function() {
+completeTransaction(walletPin, privateKey, transactionKey).then(function() {
     // Do something
 });
 ```

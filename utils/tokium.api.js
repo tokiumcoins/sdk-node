@@ -4,7 +4,7 @@ var authorizationToken = null;
 
 function walletCreate(host, data) {
     return new Promise(function(resolve, reject) {
-        if (!data.assetName || ( !data.accountPin && data.accountPin !== '' )) {
+        if (!data.assetName || ( !data.walletPin && data.walletPin !== '' )) {
             reject('Empty params.');
             return;
         }
