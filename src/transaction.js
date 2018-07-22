@@ -16,7 +16,7 @@ module.exports = class Transaction {
         return new Promise((resolve, reject) => {
             if (txData.transactionKey) {
                 // Get info from Firebase
-                this.getTransactionWithTransactionKey(txData.transactionKey).then(txInfo => {
+                this._getTransactionWithTransactionKey(txData.transactionKey).then(txInfo => {
                     this.amount         = txInfo.amount;
                     this.assetName      = txInfo.asset_name;
                     this.fromAddress    = txInfo.fromAddress;
@@ -37,23 +37,6 @@ module.exports = class Transaction {
 
                 resolve();
             }
-        });
-    }
-
-    getTransactionWithTransactionKey(transactionKey) {
-        return new Promise((resolve, reject) => {
-            var docRef = db.collection('transactions').doc(transactionKey);
-
-            docRef.get().then(doc => {
-                if (doc.exists) {
-                    resolve(doc.data());
-                } else {
-                    reject();
-                }
-            }).catch(err => {
-                console.error('Error getting document:', err);
-                reject(err);
-            });
         });
     }
 
@@ -88,8 +71,8 @@ module.exports = class Transaction {
 
     initTransaction(wallet, signOnline) {
         return new Promise((resolve, reject) => {
-            if (this.status === 'completed') {
-                reject('Your transaction have already been completed.');
+            if (this.status === 'completed' || this.status === 'needinit') {
+                reject('Your transaction have already been completed on need to be init.');
                 return;
             }
 
@@ -113,12 +96,29 @@ module.exports = class Transaction {
                 transactionInitFn(asset.server, data).then(txData => {
                     this.status = txData.status;
                     this.transactionKey = txData.transactionKey;
-                    if (txData.status === 'needsign') this.txHex = txData.tx;
+                    if (txData.status === 'waiting') this.txHex = txData.tx;
 
                     resolve();
                 }).catch(err => {
                     reject(err);
                 });
+            });
+        });
+    }
+
+    _getTransactionWithTransactionKey(transactionKey) {
+        return new Promise((resolve, reject) => {
+            var docRef = db.collection('transactions').doc(transactionKey);
+
+            docRef.get().then(doc => {
+                if (doc.exists) {
+                    resolve(doc.data());
+                } else {
+                    reject();
+                }
+            }).catch(err => {
+                console.error('Error getting document:', err);
+                reject(err);
             });
         });
     }

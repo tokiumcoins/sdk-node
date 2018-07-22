@@ -141,7 +141,7 @@ function transactionSend(host, data) {
 
 function assetCreate(host, data) {
     return new Promise(function(resolve, reject) {
-        if (!data.assetName || !data.amount || !data.assetImage) {
+        if (!data.assetName || !data.amount || !data.image) {
             reject('Empty params.');
             return;
         }
