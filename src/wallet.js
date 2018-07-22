@@ -24,7 +24,7 @@ module.exports = class Wallet {
                 }).then(() => {
                     this.asset = asset;
 
-                    _getWalletBalance().then(() => {
+                    this._getWalletBalance().then(() => {
                         this.status = 'initiated';
                         resolve();
                     }).catch(err => {
@@ -36,7 +36,7 @@ module.exports = class Wallet {
             } else {
                 this.asset = walletData.asset;
 
-                _getWalletBalance().then(() => {
+                this._getWalletBalance().then(() => {
                     this.status = 'initiated';
                     resolve();
                 }).catch(err => {
@@ -81,7 +81,7 @@ module.exports = class Wallet {
                 return;
             }
 
-            _getWalletBalance().then(() => {
+            this._getWalletBalance().then(() => {
                 resolve();
             }).catch(err => {
                 resolve();
