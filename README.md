@@ -1,6 +1,4 @@
-# Classes
-
-## Profile
+# Profile
 
 ```js
 const Tokium = require('sdk-node');
@@ -26,7 +24,9 @@ Profile {
 | Status | Meaning |
 | - | - |
 | needlogin | Need to do login. |
-| loggedin | Loggued in, you can call logout(), and other methods. | 
+| loggedin | Loggued in, you can call logout(), and other methods. |
+
+## Methods
 
 ### Login
 
@@ -52,6 +52,44 @@ profile.logout().then(() => {
 
 ```js
 let isLoggedIn = profile.isLoggedIn(); // True or false
+```
+
+### Get Wallets
+
+```js
+profile.getWallets().then(() => {
+    console.info(profile.wallets);
+}).catch(err => {
+    console.error(err);
+});
+```
+
+### Get Transactions
+
+```js
+profile.getTransactions().then(transactions => {
+    console.info(transactions); // [ Transaction(), Transaction(), ... ]
+}).catch(err => {
+    console.error(err);
+});
+```
+
+## Events
+
+### wallets-changed
+
+```js
+tokiumEvents.on('wallets-changed', profile => {
+    console.info(profile); // Profile()
+});
+```
+
+### waiting-transactions-changed
+
+```js
+tokiumEvents.on('waiting-transactions-changed', transactions => {
+    console.info(transactions); // [ Transaction(), Transaction(), ... ]
+})
 ```
 
 ## Asset
