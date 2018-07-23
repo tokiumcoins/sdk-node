@@ -51,6 +51,11 @@ module.exports = (() => {
                     return;
                 }
 
+                if (!this.assetName || this.amount || !this.image) {
+                    reject('You need to define assetName, amount and image before.');
+                    return;
+                }
+
                 TokiumAPI.assetCreate(SERVER_FOR_NEW_ASSETS, {
                     assetName:   this.assetName,
                     amount:      this.amount,

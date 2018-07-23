@@ -1,4 +1,4 @@
-# Profile
+# ``Profile``
 
 ```js
 const Tokium = require('sdk-node');
@@ -92,7 +92,7 @@ tokiumEvents.on('waiting-transactions-changed', transactions => {
 })
 ```
 
-# Asset
+# ``Asset``
 
 ```js
 const Tokium = require('sdk-node');
@@ -161,7 +161,7 @@ asset.create().then(() => {
 });
 ```
 
-# Transaction
+# ``Transaction``
 
 ```js
 const Tokium = require('sdk-node');
@@ -271,7 +271,7 @@ If ``true``, the transaction will be signed online with ``wallet.privateKey`` an
 
 NOTE: For the moment, only ``true`` is supported.
 
-# Wallet
+# ``Wallet``
 
 ```js
 const Tokium = require('sdk-node');
