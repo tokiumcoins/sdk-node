@@ -8,6 +8,26 @@ let Profile = Tokium.Profile();
 let profile = new Profile();
 ```
 
+**Profile Data Model**
+
+```js
+Profile {
+    uid: String(),
+    email: String(),
+    allowedAssets: Int(),
+    wallets: [ Wallet(), Wallet(), ... ],
+    status: String(),
+    listeners: [ Object(), Object(), ... ]
+}
+```
+
+**Flow**
+
+| Status | Meaning |
+| - | - |
+| needlogin | Need to do login. |
+| loggedin | Loggued in, you can call logout(), and other methods. | 
+
 ### Login
 
 ```js
@@ -16,6 +36,22 @@ profile.login('email@email.com', 'password').then(() => {
 }).catch(err => {
     console.error(err);
 });
+```
+
+### Logout
+
+```js
+profile.logout().then(() => {
+    console.info(profile);
+}).catch(err => {
+    console.error(err);
+});
+```
+
+### Is logged in
+
+```js
+let isLoggedIn = profile.isLoggedIn(); // True or false
 ```
 
 ## Asset
