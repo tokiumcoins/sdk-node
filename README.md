@@ -3,14 +3,19 @@
 ## Profile
 
 ```js
-let Tokium = require('sdk-node');
+const Tokium = require('sdk-node');
 let Profile = Tokium.Profile();
+let profile = new Profile();
 ```
 
 ### Login
 
 ```js
-
+profile.login('email@email.com', 'password').then(() => {
+    console.info(profile);
+}).catch(err => {
+    console.error(err);
+});
 ```
 
 ## Asset
