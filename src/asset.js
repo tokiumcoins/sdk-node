@@ -1,8 +1,7 @@
+const TokiumAPI = require('../utils/tokium.api.js');
+const SERVER_FOR_NEW_ASSETS = 'https://blockchain-token.herokuapp.com';
+
 module.exports = (() => {
-
-    const SERVER_FOR_NEW_ASSETS = 'https://blockchain-token.herokuapp.com';
-
-    const TokiumAPI = require('../utils/tokium.api.js');
 
     return class Asset {
         constructor() {

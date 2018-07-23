@@ -1,6 +1,6 @@
-module.exports = (() => {
+const TokiumAPI = require('../utils/tokium.api.js');
 
-    const TokiumAPI = require('../utils/tokium.api.js');
+module.exports = (() => {
 
     return class Transaction {
         constructor() {

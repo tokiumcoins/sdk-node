@@ -1,6 +1,6 @@
-module.exports = (() => {
+const TokiumAPI = require('../utils/tokium.api.js');
 
-    const TokiumAPI = require('../utils/tokium.api.js');
+module.exports = (() => {
 
     return class Wallet {
         constructor() {
@@ -14,7 +14,7 @@ module.exports = (() => {
 
         init(walletData) {
             return new Promise((resolve, reject) => {
-                this.walletPin       = walletData.walletPin;
+                this.walletPin       = walletData.walletPin || '';
                 this.privateKey      = walletData.privateKey;
                 this.address         = walletData.address;
 
@@ -97,17 +97,24 @@ module.exports = (() => {
 
         _getWalletBalance() {
             return new Promise((resolve, reject) => {
+                if (!this.asset.server || !this.asset.assetName || !this.address) {
+                    this.balance = '...';
+                    resolve();
+                    return;
+                }
+
                 TokiumAPI.walletBalance(this.asset.server, {
                     assetName: this.asset.assetName,
                     address: this.address
                 }).then(balanceData => {
-                    this.balance = balanceData.balance;
+                    this.balance = balanceData ? balanceData.balance : '...';
 
                     resolve();
                 }).catch(err => {
                     this.balance = '...';
 
-                    reject(err);
+                    console.error(err);
+                    resolve();
                 });
             });
         }
