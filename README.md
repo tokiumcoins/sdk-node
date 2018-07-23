@@ -23,7 +23,7 @@ Profile {
 
 | Status | Meaning |
 | - | - |
-| needlogin | Need to do login. |
+| needlogin | Need to do login(). |
 | loggedin | Loggued in, you can call logout(), and other methods. |
 
 ## Methods
@@ -92,238 +92,264 @@ tokiumEvents.on('waiting-transactions-changed', transactions => {
 })
 ```
 
-## Asset
-
-## Transaction
-
-## Wallet
-
-## Services
-
-------
-
-### Login
+# Asset
 
 ```js
-login(email, password).then(function(firebaseUserInfo) {
-    // Do something
-});
+const Tokium = require('sdk-node');
+let Asset = Tokium.Asset();
+let asset = new Asset();
 ```
 
+**Asset Data Model**
+
 ```js
-firebaseUserInfo = {
-    ...
-    "uid": "<uid>",
-    ...
+Asset {
+    assetName: String(),
+    amount: Int(),
+    enabled: Boolean(),
+    image: String(),
+    owner: String(),
+    server: String(),
+    status: String()
 }
 ```
 
-### Logout
+**Flow**
+
+| Status | Meaning |
+| - | - |
+| needinit | Need to do init(). |
+| notexists | Asset doesn't exist on database. Need to do create(). |
+| exists | Asset exists on database. You can use it to create wallets and do transactions. |
+
+## Methods
+
+### init()
 
 ```js
-logout().then(function() {
-    // Do something
+asset.init(assetData).then(() => {
+    console.info(asset);
+}).catch(err => {
+    console.error(err);
 });
 ```
 
-### Is Logged In
+* assetData:
 
 ```js
-var isLoggedIn = isLoggedIn(); // true or false
-```
-
-### New Account
-
-```js
-newAccount(assetName, walletPin).then(function(account) {
-    // Do something
-});
-```
-
-```js
-account = {
-    address: <address>,
-    privateKey: <privkey>,
-    assetName: <assetName>
+let assetData = {
+    assetName: String(),    // Required
+    amount: Int(),          // Optional (will be overwritten if asset exists)
+    image: 'http://...'     // Optional (will be overwritten if asset exists)
 }
 ```
 
-### Get Account
+* Note:
+
+If assetName exists, its properties will be loaded and status will be ``exists``. If it doesn't exist, status will be ``notexists`` and you can create it with ``asset.create()``.
+
+### create()
 
 ```js
-getAccount(address).then(function(account) {
-    // Do something
+asset.amount = Int();   // Required
+asset.image = 'http://...';   // Required
+
+asset.create().then(() => {
+    console.info(asset);
+}).catch(err => {
+    console.error(err);
 });
 ```
 
+# Transaction
+
 ```js
-account = {
-    "address": "<address>",
-    "asset_name": "<asset_name>",
-    "balance": "<balance>",
-    "owner": "<owner>",
-    "private_key": "<private_key>",
-    "public_key": "<public_key>",
-    "server": "<server>"
+const Tokium = require('sdk-node');
+let Transaction = Tokium.Transaction();
+let transaction = new Transaction();
+```
+
+**Transaction Data Model**
+
+```js
+Asset {
+    amount: Int(),
+    assetName: String(),
+    fromAddress: String(),
+    toAddress: String(),
+    transactionKey: String(),
+    txHex: String(),
+    status: String()
 }
 ```
 
-### Get Accounts
+**Flow**
+
+| Status | Meaning |
+| - | - |
+| needinit | Need to do init(). |
+| local | Transaction doesn't exist on database and is local. Need to do requestTransaction() or initTransaction(). |
+| waiting | Transaction exists on database but it is waiting to be sent completed. Need to do initTransaction() with ``signOnline = true``. |
+| completed | Transaction is completed. Nothing more to do. |
+
+## Methods
+
+### init()
 
 ```js
-getAccounts().then(function(accounts) {
-    // Do something
+transaction.init(txData).then(() => {
+    console.info(transaction);
+}).catch(err => {
+    console.error(err);
 });
 ```
 
-```js
-accounts = [
-    {
-        "address": "<address>",
-        "asset_name": "<asset_name>",
-        "balance": "<balance>",
-        "owner": "<owner>",
-        "private_key": "<private_key>",
-        "public_key": "<public_key>",
-        "server": "<server>"
-    },
-    ...
-]
-```
-
-### Prepare Transaction
+* txData - DM 1
 
 ```js
-prepareTransaction(fromAddress, toAddress, assetName, amount).then(function(transactionData) {
-    // Do something
-});
-```
-
-```js
-transactionData = {
-    "transactionKey": "<transactionKey>"
+txData = {
+    transactionKey: String()
 }
 ```
 
-### Complete Transaction
+Allows to recover a transaction from database.
+
+* txData - DM 2
 
 ```js
-completeTransaction(walletPin, privateKey, transactionKey).then(function() {
-    // Do something
-});
-```
-
-### Request asset
-
-```js
-requestAsset(assetName, assetImage, amount).then(function() {
-    // Do something
-});
-```
-
-### Get Assets List
-
-```js
-getAssetsList(options).then(function(assetsList) {
-    // Do something
-});
-```
-
-```js
-options = {
-    "onlyMyAssets": "boolean"
+txData = {
+    amount: Int(),
+    assetName: String(),
+    fromAddress: String(),
+    toAddress: String()
 }
 ```
 
-```js
-assetsList = [
-    {
-        "name": "<name>",
-        "owner": "<owner>",
-        "server": "<server>",
-    },
-    ...
-]
-```
+Allows to start a new transaction.
 
-### Get Transactions List
+### requestTransaction()
 
 ```js
-getTransactionsList().then(function(transactionsList) {
-    // Do something
+transaction.requestTransaction().then(() => {
+    console.info(transaction);
+}).catch(err => {
+    console.error(err);
 });
 ```
 
-```js
-transactionsList = {
-    receiver: [
-        {
-            "transactionKey": "<transactionKey>",
-            "amount": "<amount>",
-            "asset_name": "<asset_name>",
-            "from": "<from>",
-            "fromAddress": "<fromAddress>",
-            "status": "<status>",
-            "to": "<to>",
-            "toAddress": "<toAddress>"
-        },
-        ...
-    ],
-    sender: [
-        {
-            "transactionKey": "<transactionKey>",
-            "amount": "<amount>",
-            "asset_name": "<asset_name>",
-            "from": "<from>",
-            "fromAddress": "<fromAddress>",
-            "status": "<status>",
-            "to": "<to>",
-            "toAddress": "<toAddress>"
-        },
-        ...
-    ]
-}
-```
+Register the transaction on database but it isn't sended to blockchain. Very usefull to request transactions to other users.
 
-## Events
+### initTransaction()
 
 ```js
-tokiumEvents.on('event-name', function(data) {
-    // Do something
+transaction.initTransaction(wallet, signOnline).then(() => {
+    console.info(transaction);
+}).catch(err => {
+    console.error(err);
 });
 ```
 
-### waiting-transactions-changed
+* wallet
 
 ```js
-data = {
-    {
-        "transactionKey": "<transactionKey>",
-        "amount": "<amount>",
-        "asset_name": "<asset_name>",
-        "from": "<from>",
-        "fromAddress": "<fromAddress>",
-        "status": "<status>",
-        "to": "<to>",
-        "toAddress": "<toAddress>"
-    },
-    ...
+let wallet = {
+    address: String(),
+    privateKey: String(),
+    walletPin: String()
+};
+```
+
+or
+
+```js
+let wallet = new Tokium.Wallet();
+```
+
+* signOnline
+
+If ``true``, the transaction will be signed online with ``wallet.privateKey`` and ``wallet.walletPin``. If ``false``, ``transaction.txHex`` need to be signed offline and be sent later.
+
+NOTE: For the moment, only ``true`` is supported.
+
+# Wallet
+
+```js
+const Tokium = require('sdk-node');
+let Wallet = Tokium.Wallet();
+let wallet = new Wallet();
+```
+
+**Wallet Data Model**
+
+```js
+Wallet {
+    walletPin: Int(),
+    privateKey: String(),
+    address: String(),
+    asset: Asset(),
+    balance: Int(),
+    status: String()
 }
 ```
 
-### accounts-changed
+**Flow**
+
+| Status | Meaning |
+| - | - |
+| needlogin | Need to do init() or create(). |
+| initiated | Wallet is initiated and you can use it. |
+
+## Methods
+
+### init()
 
 ```js
-data = [
-    {
-        "address": "<address>",
-        "asset_name": "<asset_name>",
-        "balance": "<balance>",
-        "owner": "<owner>",
-        "private_key": "<private_key>",
-        "public_key": "<public_key>",
-        "server": "<server>"
-    },
-    ...
-]
+wallet.init(walletData).then(() => {
+    console.info(wallet);
+}).catch(err => {
+    console.error(err);
+});
+```
+
+* walletData
+
+```js
+walletData = {
+    walletPin: String(),    // Required
+    privateKey: String(),   // Required
+    address: String(),      // Required
+    assetName: String()     // Required
+}
+
+```
+
+or
+
+```js
+walletData = {
+    walletPin: String(),    // Required
+    privateKey: String(),   // Required
+    address: String(),      // Required
+    asset: Asset()          // Required
+}
+```
+
+### create()
+
+```js
+wallet.create(assetName, walletPin).then(() => {
+    console.info(wallet);
+}).catch(err => {
+    console.error(err);
+});
+```
+
+### update()
+
+```js
+wallet.update().then(() => {
+    console.info(wallet);
+}).catch(err => {
+    console.error(err);
+});
 ```
