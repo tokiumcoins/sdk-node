@@ -1,3 +1,6 @@
+// Fix for react-native
+self = global;
+
 const events = require('events');
 global.tokiumEvents = global.tokiumEvents || new events.EventEmitter();
 
@@ -20,9 +23,17 @@ global.db = firebase.firestore();
 const settings = { timestampsInSnapshots: true };
 db.settings(settings);
 
+let Asset = require('./src/asset.js');
+let Profile = require('./src/profile.js');
+let Transaction = require('./src/transaction.js');
+let Wallet = require('./src/wallet.js');
+let Tools = require('./src/tools.js');
+
 module.exports = {
-    Asset:          require('./src/asset.js'),
-    Profile:        require('./src/profile.js'),
-    Transaction:    require('./src/transaction.js'),
-    Wallet:         require('./src/wallet.js')
+    Asset:          Asset,
+    Profile:        Profile,
+    Transaction:    Transaction,
+    Wallet:         Wallet,
+    Tools:          Tools,
+    currentUser:    new Profile()
 };
