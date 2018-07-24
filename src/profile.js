@@ -33,7 +33,7 @@ module.exports = (() => {
 
                             this.status = 'loggedin';
 
-                            this.getWallets();
+                            //this.getWallets();
                             this._startListeners();
 
                             resolve();

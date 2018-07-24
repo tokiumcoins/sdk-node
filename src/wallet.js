@@ -56,6 +56,7 @@ module.exports = (() => {
 
         create(assetName, walletPin) {
             return new Promise((resolve, reject) => {
+                let Asset = require('./asset.js');
                 let asset = new Asset();
 
                 asset.init({
@@ -71,6 +72,8 @@ module.exports = (() => {
                         this.asset = asset;
                         this.balance = 0;
                         this.status = 'initiated';
+
+                        resolve();
                     }).catch(err => {
                         reject(err);
                     });
