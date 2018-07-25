@@ -4,7 +4,7 @@ var authorizationToken = null;
 
 function walletCreate(host, data) {
     return new Promise(function(resolve, reject) {
-        if (!data.assetName || ( !data.accountPin && data.accountPin !== '' )) {
+        if (!data.assetName || ( !data.walletPin && data.walletPin !== '' )) {
             reject('Empty params.');
             return;
         }
@@ -70,7 +70,7 @@ function transactionRequest(host, data) {
 
 function transactionInitExplicit(host, data) {
     return new Promise(function(resolve, reject) {
-        if (!data.transactionInfo || !data.signOnline) {
+        if (!data.transactionInfo || data.signOnline === undefined) {
             reject('Empty params.');
             return;
         }
@@ -97,7 +97,7 @@ function transactionInitExplicit(host, data) {
 
 function transactionInitImplicit(host, data) {
     return new Promise(function(resolve, reject) {
-        if (!data.transactionKey || !data.signOnline) {
+        if (!data.transactionKey || data.signOnline === undefined) {
             reject('Empty params.');
             return;
         }
@@ -141,7 +141,7 @@ function transactionSend(host, data) {
 
 function assetCreate(host, data) {
     return new Promise(function(resolve, reject) {
-        if (!data.assetName || !data.amount || !data.assetImage) {
+        if (!data.assetName || !data.amount || !data.image) {
             reject('Empty params.');
             return;
         }
