@@ -67,7 +67,7 @@ profile.getWallets().then(() => {
 ### Get Transactions
 
 ```js
-profile.getTransactions().then(transactions => {
+profile.getTransactions(type, limit).then(transactions => { // type = 'from' or 'to'
     console.info(transactions); // [ Transaction(), Transaction(), ... ]
 }).catch(err => {
     console.error(err);
