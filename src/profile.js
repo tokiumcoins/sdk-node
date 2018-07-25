@@ -89,6 +89,12 @@ module.exports = (() => {
             });
         }
 
+        findWallet(address) {
+            return this.wallets.filter(wallet => {
+                return wallet.address === address;
+            });
+        }
+
         getTransactions(type, limit) {
             return new Promise((resolve, reject) => {
                 limit = limit || 100;

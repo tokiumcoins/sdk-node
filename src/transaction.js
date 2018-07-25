@@ -79,6 +79,7 @@ module.exports = (() => {
                     return;
                 }
 
+                let Asset = require('./asset.js');
                 var asset = new Asset();
                 asset.init({
                     assetName: this.assetName
