@@ -91,7 +91,8 @@ module.exports = (() => {
 
                     let transactionInitFn = (this.transactionKey) ? TokiumAPI.transactionInitImplicit : TokiumAPI.transactionInitExplicit;
                     let data = {
-                        ...wallet,
+                        privateKey: wallet.privateKey,
+                        walletPin: wallet.walletPin,
                         signOnline
                     };
 
