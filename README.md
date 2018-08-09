@@ -172,7 +172,7 @@ let transaction = new Transaction();
 **Transaction Data Model**
 
 ```js
-Asset {
+Transaction {
     amount: Int(),
     assetName: String(),
     fromAddress: String(),
