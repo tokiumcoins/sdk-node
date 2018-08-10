@@ -20,28 +20,24 @@ module.exports = (() => {
                 }
 
                 firebase.auth().signInWithEmailAndPassword(email, password).then(firebaseUserInfo => {
-                    firebase.auth().currentUser.getIdToken().then(token => {
-                        // Set authToken on Tokium API.
-                        TokiumAPI.setAuthToken(token);
+                    this._startSession(firebaseUserInfo).then(() => {
+                        resolve();
+                    });
+                }).catch(err => {
+                    reject(err.message);
+                });
+            });
+        }
 
-                        let userSession = firebase.auth().currentUser;
-                        this.uid = userSession.uid;
+        signup(email, password) {
+            return new Promise((resolve, reject) => {
+                if (this.status === 'loggedin') {
+                    reject('You have already loggedin.');
+                }
 
-                        this._getUserProfile().then(userProfile => {
-                            this.email = userProfile.email;
-                            this.allowedAssets = userProfile.allowedAssets;
-
-                            this.status = 'loggedin';
-
-                            //this.getWallets();
-                            this._startListeners();
-
-                            resolve();
-                        }).catch(err => {
-                            this.uid = null;
-                            reject(err);
-                        });
-
+                firebase.auth().createUserWithEmailAndPassword(email, password).then(firebaseUserInfo => {
+                    this._startSession(firebaseUserInfo).then(() => {
+                        resolve();
                     });
                 }).catch(err => {
                     reject(err.message);
@@ -130,6 +126,25 @@ module.exports = (() => {
                 }).catch(err => {
                     console.log('Error getting document:', err);
                     reject(err.message);
+                });
+            });
+        }
+
+        _startSession(firebaseUserInfo) {
+            return new Promise((resolve, reject) => {
+                firebase.auth().currentUser.getIdToken().then(token => {
+                    // Set authToken on Tokium API.
+                    TokiumAPI.setAuthToken(token);
+
+                    let userSession = firebase.auth().currentUser;
+                    this.uid = userSession.uid;
+                    this.email = userSession.email;
+
+                    this.status = 'loggedin';
+
+                    this._startListeners();
+
+                    resolve();
                 });
             });
         }
@@ -234,6 +249,7 @@ module.exports = (() => {
         _startListeners() {
             this.listeners.push(this._listenWalletChanges());
             this.listeners.push(this._listenWaitingTransactions());
+            this.listeners.push(this._listenUserProfile());
         }
 
         _listenWalletChanges() {
@@ -256,7 +272,6 @@ module.exports = (() => {
                           .where('from', '==', this.uid)
                           .where('status', '==', 'waiting');
 
-
             var observer = query.onSnapshot(querySnapshot => {
                 var transactionKeys = querySnapshot.docs.map(doc => {
                     return doc.id;
@@ -265,6 +280,21 @@ module.exports = (() => {
                 this._composeTransactions(transactionKeys).then(transactions => {
                     tokiumEvents.emit('waiting-transactions-changed', transactions);
                 });
+            });
+
+            return observer;
+        }
+
+        _listenUserProfile() {
+            var query = db.collection('users').doc(this.uid);
+
+            var observer = query.onSnapshot(querySnapshot => {
+                let profile = querySnapshot.data();
+                
+                if (profile) {
+                    this.allowedAssets = profile.allowedAssets;
+                    tokiumEvents.emit('profile-changed', this);
+                }
             });
 
             return observer;
