@@ -15,7 +15,7 @@ module.exports = (() => {
         init(walletData) {
             return new Promise((resolve, reject) => {
                 this.walletPin       = walletData.walletPin || '';
-                this.privateKey      = walletData.privateKey;
+                this.privateKey      = walletData.privateKey || '';
                 this.address         = walletData.address;
 
                 // With assetName string
