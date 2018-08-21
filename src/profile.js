@@ -7,6 +7,7 @@ module.exports = (() => {
             this.uid            = null;
             this.email          = null;
             this.allowedAssets  = null;
+            this.authToken      = null;
             this.wallets        = [];
             this.status         = 'needlogin';
 
@@ -55,6 +56,7 @@ module.exports = (() => {
                     this.uid            = null;
                     this.email          = null;
                     this.allowedAssets  = null;
+                    this.authToken      = null;
                     this.wallets        = [];
                     this.status         = 'needlogin';
 
@@ -139,6 +141,7 @@ module.exports = (() => {
                     let userSession = firebase.auth().currentUser;
                     this.uid = userSession.uid;
                     this.email = userSession.email;
+                    this.authToken = token;
 
                     this.status = 'loggedin';
 
