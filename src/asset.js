@@ -51,7 +51,7 @@ module.exports = (() => {
                     return;
                 }
 
-                if (!this.assetName || this.amount || !this.image) {
+                if (!this.assetName || !this.amount || !this.image) {
                     reject('You need to define assetName, amount and image before.');
                     return;
                 }
