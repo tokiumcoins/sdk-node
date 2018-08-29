@@ -1,13 +1,13 @@
-function getAssetsList() {
+function getAssetsList(uid) {
     return new Promise(function(resolve, reject) {
-        var queryRef = db.collection('assets');
+        var queryRef = uid ? db.collection('assets').where('owner', '==', uid) : db.collection('assets');
 
         queryRef.get().then(querySnapshot => {
             var assetNamesArray = querySnapshot.docs.map(doc => {
                 return doc.id;
             });
 
-            _composeWallets(assetNamesArray).then(assets => {
+            _composeAssets(assetNamesArray).then(assets => {
                 resolve(assets);
             }).catch(err => {
                 reject(err);
@@ -19,7 +19,7 @@ function getAssetsList() {
     });
 }
 
-function _composeWallets(assetNamesArray) {
+function _composeAssets(assetNamesArray) {
     return new Promise((resolve, reject) => {
         let Asset = require('./asset.js');
 

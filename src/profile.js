@@ -1,4 +1,5 @@
 const TokiumAPI = require('../utils/tokium.api.js');
+const Tools = require('./tools.js');
 
 module.exports = (() => {
 
@@ -128,6 +129,20 @@ module.exports = (() => {
                 }).catch(err => {
                     console.log('Error getting document:', err);
                     reject(err.message);
+                });
+            });
+        }
+
+        getMyAssets() {
+            return new Promise((resolve, reject) => {
+                if (this.status === 'needlogin') {
+                    reject('You need to login before.');
+                }
+
+                Tools.getAssetsList(this.uid).then(assets => {
+                    resolve(assets)
+                }).catch(err => {
+                    reject(err);
                 });
             });
         }
