@@ -23,11 +23,11 @@ global.db = firebase.firestore();
 const settings = { timestampsInSnapshots: true };
 db.settings(settings);
 
-let Asset = require('./lib/asset.js');
-let Profile = require('./lib/profile.js');
-let Transaction = require('./lib/transaction.js');
-let Wallet = require('./lib/wallet.js');
-let Tools = require('./lib/tools.js');
+let Asset = require('./dist/asset.js');
+let Profile = require('./dist/profile.js');
+let Transaction = require('./dist/transaction.js');
+let Wallet = require('./dist/wallet.js');
+let Tools = require('./dist/tools.js');
 
 module.exports = {
     Asset:          Asset,

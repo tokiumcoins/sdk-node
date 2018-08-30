@@ -2,11 +2,11 @@
   "name": "sdk-node",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "./dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "compile": "babel --presets es2015 -d ./lib ./src",
-    "postinstall": "npm run compile"
+    "build": "babel --presets es2015 src -d dist",
+    "postinstall": "node lib/post_install.js"
   },
   "repository": {
     "type": "git",
