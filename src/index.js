@@ -14,9 +14,9 @@ const FIREBASE_CONFIG = {
 };
 
 // Init Firebase and Firestore
-import firebase from '@firebase/app';
-import firestore from '@firebase/firestore';
-import auth from '@firebase/auth';
+import firebase from '../node_modules/@firebase/app';
+import firestore from '../node_modules/@firebase/firestore';
+import auth from '../node_modules/@firebase/auth';
 
 global.firebase = firebase;
 
