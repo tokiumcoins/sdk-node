@@ -19,8 +19,10 @@
   },
   "homepage": "https://gitlab.com/Tokium/sdk-node#README",
   "dependencies": {
+    "@firebase/app": "^0.3.3",
+    "@firebase/auth": "^0.7.4",
+    "@firebase/firestore": "^0.7.2",
     "events": "^2.0.0",
-    "firebase": "^5.0.4",
     "node-fetch": "^2.1.2"
   },
   "devDependencies": {

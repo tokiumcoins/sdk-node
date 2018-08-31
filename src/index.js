@@ -1,5 +1,4 @@
 // Fix for react-native
-self = global;
 
 const events = require('events');
 global.tokiumEvents = global.tokiumEvents || new events.EventEmitter();
@@ -8,14 +7,14 @@ const FIREBASE_CONFIG = {
     apiKey: "AIzaSyASn4mvQQjAAe5IvsWYEUQcI1odtUsIZHU",
     authDomain: "blockchain-tokens.firebaseapp.com",
     databaseURL: "https://blockchain-tokens.firebaseio.com",
-    projectId: "blockchain-tokens",
-    storageBucket: "blockchain-tokens.appspot.com",
-    messagingSenderId: "401039270457"
+    projectId: "blockchain-tokens"
 };
 
 // Init Firebase and Firestore
-global.firebase = require('firebase');
-require('firebase/firestore');
+global.firebase = require('@firebase/app').firebase;
+require('@firebase/firestore');
+require('@firebase/auth');
+
 firebase.initializeApp(FIREBASE_CONFIG);
 
 // Init DB.
