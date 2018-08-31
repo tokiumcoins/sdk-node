@@ -1,4 +1,7 @@
 // Fix for react-native
+if (!global.self) {
+    global.self = global;
+}
 
 const events = require('events');
 global.tokiumEvents = global.tokiumEvents || new events.EventEmitter();
