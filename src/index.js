@@ -14,9 +14,11 @@ const FIREBASE_CONFIG = {
 };
 
 // Init Firebase and Firestore
-global.firebase = require('@firebase/app').firebase;
-require('@firebase/firestore');
-require('@firebase/auth');
+import firebase from '@firebase/app';
+import firestore from '@firebase/firestore';
+import auth from '@firebase/auth';
+
+global.firebase = firebase;
 
 firebase.initializeApp(FIREBASE_CONFIG);
 
