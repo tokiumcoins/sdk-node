@@ -14,37 +14,16 @@ const FIREBASE_CONFIG = {
 };
 
 // Init Firebase and Firestore
+import '@firebase/firestore';
+import '@firebase/auth';
 import firebase from '@firebase/app';
-import firestore from '@firebase/firestore';
-import auth from '@firebase/auth';
 
 global.firebase = firebase;
-
-let originalFN = firebase.initializeApp;
-
-firebase.initializeApp = (...args) => {
-    // Avoid two [DEFAULT] creation
-    if (!args[1]) {
-        // If there are more instances, autogenerate new id instance.
-        if (firebase.apps.length) args[1] = makeid(5);
-    }
-
-    originalFN(...args);
-}
-
-function makeid(length) {
-  var text = '';
-  var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-
-  for (var i = 0; i < length; i++)
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-  return text;
-}
 
 firebase.initializeApp(FIREBASE_CONFIG);
 
 // Init DB.
+console.info(firebase);
 global.db = firebase.firestore();
 const settings = { timestampsInSnapshots: true };
 db.settings(settings);
