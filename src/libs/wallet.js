@@ -1,4 +1,5 @@
 const TokiumAPI = require('../utils/tokium.api.js');
+const Storage = require('../utils/storage.js');
 
 module.exports = (() => {
 
@@ -33,7 +34,6 @@ module.exports = (() => {
                             resolve();
                         }).catch(err => {
                             this.status = 'initiated';
-                            console.error(err);
                             resolve();
                         });
                     });
@@ -47,7 +47,6 @@ module.exports = (() => {
                         resolve();
                     }).catch(err => {
                         this.status = 'initiated';
-                        console.error(err);
                         resolve();
                     });
                 }
@@ -98,6 +97,92 @@ module.exports = (() => {
             });
         }
 
+        delete() {
+            return new Promise((resolve, reject) => {
+                if (this.status === 'needinit') {
+                    reject('You need to init or create your wallet before.');
+                    return;
+                }
+
+                if (!firebase.auth().currentUser.uid) {
+                    reject('You need to login before.');
+                    return;
+                }
+
+                var query = db.collection('asset_accounts')
+                    .where('owner', '==', firebase.auth().currentUser.uid)
+                    .where('address', '==', this.address);
+
+                query.get().then(querySnapshot => {
+                    querySnapshot.forEach(doc => {
+                        doc.ref.delete();
+                    });
+                    this._reset();
+
+                    resolve();
+                });
+            });
+        }
+
+        savePrivateKey(privateKey) {
+            const storage = new Storage();
+            privateKey = privateKey || this.privateKey;
+
+            return new Promise((resolve, reject) => {
+                if (!privateKey) {
+                    reject('You need to define a privateKey.');
+                    return;
+                }
+
+                storage.set(this.address + '.privKey', privateKey).then(() => {
+                    this.privateKey = privateKey;
+                    resolve();
+                }).catch(err => {
+                    reject(err);
+                });
+            });
+        }
+
+        getPrivateKey() {
+            const storage = new Storage();
+
+            return new Promise((resolve, reject) => {
+                storage.get(this.address + '.privKey').then(value => {
+                    if (!value) {
+                        reject('This private key is not stored on device storage.');
+                        return;
+                    }
+
+                    this.privateKey = value;
+                    resolve();
+                }).catch(err => {
+                    reject(err);
+                });
+            });
+        }
+
+        clearPrivateKey() {
+            const storage = new Storage();
+
+            return new Promise((resolve, reject) => {
+                storage.remove(this.address + '.privKey').then(value => {
+                    this.privateKey = '';
+                    resolve();
+                }).catch(err => {
+                    reject(err);
+                });
+            });
+        }
+
+        _reset() {
+            this.walletPin       = null;
+            this.privateKey      = null;
+            this.address         = null;
+            this.asset           = null;
+            this.balance         = null;
+            this.status          = 'needinit';
+        }
+
         _getWalletBalance() {
             return new Promise((resolve, reject) => {
                 if (!this.asset.server || !this.asset.assetName || !this.address) {
@@ -116,7 +201,6 @@ module.exports = (() => {
                 }).catch(err => {
                     this.balance = '...';
 
-                    console.error(err);
                     resolve();
                 });
             });
