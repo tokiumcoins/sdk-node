@@ -23,7 +23,6 @@ global.firebase = firebase;
 firebase.initializeApp(FIREBASE_CONFIG);
 
 // Init DB.
-console.info(firebase);
 global.db = firebase.firestore();
 const settings = { timestampsInSnapshots: true };
 db.settings(settings);
