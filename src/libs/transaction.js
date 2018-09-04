@@ -122,7 +122,6 @@ module.exports = (() => {
                         reject();
                     }
                 }).catch(err => {
-                    console.error('Error getting document:', err);
                     reject(err);
                 });
             });

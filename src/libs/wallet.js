@@ -33,7 +33,6 @@ module.exports = (() => {
                             resolve();
                         }).catch(err => {
                             this.status = 'initiated';
-                            console.error(err);
                             resolve();
                         });
                     });
@@ -47,7 +46,6 @@ module.exports = (() => {
                         resolve();
                     }).catch(err => {
                         this.status = 'initiated';
-                        console.error(err);
                         resolve();
                     });
                 }
@@ -152,7 +150,6 @@ module.exports = (() => {
                 }).catch(err => {
                     this.balance = '...';
 
-                    console.error(err);
                     resolve();
                 });
             });
