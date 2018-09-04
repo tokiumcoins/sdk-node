@@ -1,4 +1,5 @@
 const TokiumAPI = require('../utils/tokium.api.js');
+const Storage = require('../utils/storage.js');
 
 module.exports = (() => {
 
@@ -119,6 +120,56 @@ module.exports = (() => {
                     this._reset();
 
                     resolve();
+                });
+            });
+        }
+
+        savePrivateKey(privateKey) {
+            const storage = new Storage();
+            privateKey = privateKey || this.privateKey;
+
+            return new Promise((resolve, reject) => {
+                if (!privateKey) {
+                    reject('You need to define a privateKey.');
+                    return;
+                }
+
+                storage.set(this.address + '.privKey', privateKey).then(() => {
+                    this.privateKey = privateKey;
+                    resolve();
+                }).catch(err => {
+                    reject(err);
+                });
+            });
+        }
+
+        getPrivateKey() {
+            const storage = new Storage();
+
+            return new Promise((resolve, reject) => {
+                storage.get(this.address + '.privKey').then(value => {
+                    if (!value) {
+                        reject('This private key is not stored on device storage.');
+                        return;
+                    }
+
+                    this.privateKey = value;
+                    resolve();
+                }).catch(err => {
+                    reject(err);
+                });
+            });
+        }
+
+        clearPrivateKey() {
+            const storage = new Storage();
+
+            return new Promise((resolve, reject) => {
+                storage.remove(this.address + '.privKey').then(value => {
+                    this.privateKey = '';
+                    resolve();
+                }).catch(err => {
+                    reject(err);
                 });
             });
         }
