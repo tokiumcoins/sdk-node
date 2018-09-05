@@ -104,18 +104,14 @@ class ExpoSecureStorage {
     };
 
     getItem(key) {
-        return new Promise((resolve) => {
-            localStorage.getItemAsync(key, {
-                keychainService: 'tokiumSecureStorage'
-            });
+        return Expo.SecureStore.getItemAsync(key, {
+            keychainService: 'tokiumSecureStorage'
         });
     };
 
     removeItem(key) {
-        return new Promise((resolve) => {
-            localStorage.deleteItemAsync(key, {
-                keychainService: 'tokiumSecureStorage'
-            });
+        return Expo.SecureStore.deleteItemAsync(key, {
+            keychainService: 'tokiumSecureStorage'
         });
     };
 }
