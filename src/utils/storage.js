@@ -1,5 +1,6 @@
-const Expo = Expo || null;
-const AsyncStorage = AsyncStorage || null;
+const Expo = global.Expo || null;
+const AsyncStorage = global.AsyncStorage || null;
+const localStorage = global.localStorage || null;
 
 module.exports = (() => {
     return class Storage {
@@ -14,6 +15,11 @@ module.exports = (() => {
 
                 if (!!AsyncStorage) {
                     this.controller = AsyncStorage;
+                    return;
+                }
+
+                if (!!localStorage) {
+                    this.controller = new LocalStorage();
                     return;
                 }
 
@@ -53,6 +59,31 @@ class StorageMock {
 
     removeItem(key) {
         return new Promise((resolve) => {
+            resolve();
+        });
+    };
+}
+
+class LocalStorage {
+    constructor() {};
+
+    setItem(key, data) {
+        return new Promise((resolve) => {
+            localStorage.setItem(key, data);
+            resolve();
+        });
+    };
+
+    getItem(key) {
+        return new Promise((resolve) => {
+            const data = localStorage.getItem(key);
+            resolve(data);
+        });
+    };
+
+    removeItem(key) {
+        return new Promise((resolve) => {
+            localStorage.removeItem(key);
             resolve();
         });
     };
