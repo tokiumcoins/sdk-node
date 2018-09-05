@@ -7,10 +7,10 @@ const events = require('events');
 global.tokiumEvents = global.tokiumEvents || new events.EventEmitter();
 
 const FIREBASE_CONFIG = {
-    apiKey: "AIzaSyASn4mvQQjAAe5IvsWYEUQcI1odtUsIZHU",
-    authDomain: "blockchain-tokens.firebaseapp.com",
-    databaseURL: "https://blockchain-tokens.firebaseio.com",
-    projectId: "blockchain-tokens"
+    apiKey: 'AIzaSyASn4mvQQjAAe5IvsWYEUQcI1odtUsIZHU',
+    authDomain: 'blockchain-tokens.firebaseapp.com',
+    databaseURL: 'https://blockchain-tokens.firebaseio.com',
+    projectId: 'blockchain-tokens'
 };
 
 // Init Firebase and Firestore
@@ -18,14 +18,14 @@ import '@firebase/firestore';
 import '@firebase/auth';
 import firebase from '@firebase/app';
 
-global.firebase = firebase;
+global.tokiumFirebase = firebase;
 
-firebase.initializeApp(FIREBASE_CONFIG);
+tokiumFirebase.initializeApp(FIREBASE_CONFIG);
 
-// Init DB.
-global.db = firebase.firestore();
+// Init tokiumFirestore.
+global.tokiumFirestore = tokiumFirebase.firestore();
 const settings = { timestampsInSnapshots: true };
-db.settings(settings);
+tokiumFirestore.settings(settings);
 
 let Asset = require('./libs/asset.js');
 let Profile = require('./libs/profile.js');

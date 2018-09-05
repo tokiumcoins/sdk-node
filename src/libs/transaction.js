@@ -113,7 +113,7 @@ module.exports = (() => {
 
         _getTransactionWithTransactionKey(transactionKey) {
             return new Promise((resolve, reject) => {
-                var docRef = db.collection('transactions').doc(transactionKey);
+                var docRef = tokiumFirestore.collection('transactions').doc(transactionKey);
 
                 docRef.get().then(doc => {
                     if (doc.exists) {

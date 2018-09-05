@@ -104,13 +104,13 @@ module.exports = (() => {
                     return;
                 }
 
-                if (!firebase.auth().currentUser.uid) {
+                if (!tokiumFirebase.auth().currentUser.uid) {
                     reject('You need to login before.');
                     return;
                 }
 
-                var query = db.collection('asset_accounts')
-                    .where('owner', '==', firebase.auth().currentUser.uid)
+                var query = tokiumFirestore.collection('asset_accounts')
+                    .where('owner', '==', tokiumFirebase.auth().currentUser.uid)
                     .where('address', '==', this.address);
 
                 query.get().then(querySnapshot => {

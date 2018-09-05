@@ -92,7 +92,7 @@ module.exports = (() => {
 
         _getAssetInfo(assetName) {
             return new Promise((resolve, reject) => {
-                var docRef = db.collection('assets').doc(assetName);
+                var docRef = tokiumFirestore.collection('assets').doc(assetName);
 
                 docRef.get().then(doc => {
                     if (doc.exists) {
