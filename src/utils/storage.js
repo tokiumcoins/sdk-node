@@ -1,4 +1,9 @@
-const Expo = global.Expo || null;
+let Expo = null;
+
+try {
+    Expo = require('expo');
+} catch(e) {}
+
 const AsyncStorage = global.AsyncStorage || null;
 const localStorage = global.localStorage || null;
 
