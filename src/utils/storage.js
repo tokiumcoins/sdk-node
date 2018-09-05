@@ -1,6 +1,5 @@
 const Expo = Expo || null;
 const AsyncStorage = AsyncStorage || null;
-const localStorage = localStorage || null;
 
 module.exports = (() => {
     return class Storage {
@@ -18,7 +17,7 @@ module.exports = (() => {
                     return;
                 }
 
-                this.controller = new LocalStorage();
+                this.controller = new StorageMock();
             }
         }
 
@@ -36,33 +35,24 @@ module.exports = (() => {
     };
 })();
 
-class LocalStorage {
-    constructor() {
-        this.localStorage = localStorage;
-
-        if (typeof this.localStorage === 'undefined' || this.localStorage === null) {
-            var LocalStorage = require('node-localstorage').LocalStorage;
-            this.localStorage = new LocalStorage('./tokiumLocalStorage');
-        }
-    };
+class StorageMock {
+    constructor() {};
 
     setItem(key, data) {
         return new Promise((resolve) => {
-            this.localStorage.setItem(key, data);
             resolve();
         });
     };
 
     getItem(key) {
         return new Promise((resolve) => {
-            let value = this.localStorage.getItem(key);
-            resolve(value);
+            const examplePrivKey = 'fake_priv_key';
+            resolve(examplePrivKey);
         });
     };
 
     removeItem(key) {
         return new Promise((resolve) => {
-            this.localStorage.removeItem(key);
             resolve();
         });
     };

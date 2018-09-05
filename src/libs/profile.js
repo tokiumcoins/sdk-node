@@ -21,7 +21,7 @@ module.exports = (() => {
                     reject('You have already loggedin.');
                 }
 
-                firebase.auth().signInWithEmailAndPassword(email, password).then(firebaseUserInfo => {
+                tokiumFirebase.auth().signInWithEmailAndPassword(email, password).then(firebaseUserInfo => {
                     this._startSession(firebaseUserInfo).then(() => {
                         resolve();
                     });
@@ -37,7 +37,7 @@ module.exports = (() => {
                     reject('You have already loggedin.');
                 }
 
-                firebase.auth().createUserWithEmailAndPassword(email, password).then(firebaseUserInfo => {
+                tokiumFirebase.auth().createUserWithEmailAndPassword(email, password).then(firebaseUserInfo => {
                     this._startSession(firebaseUserInfo).then(() => {
                         resolve();
                     });
@@ -53,7 +53,7 @@ module.exports = (() => {
                     reject('You have already logout.');
                 }
 
-                firebase.auth().signOut().then(() => {
+                tokiumFirebase.auth().signOut().then(() => {
                     this.uid            = null;
                     this.email          = null;
                     this.allowedAssets  = null;
@@ -102,12 +102,12 @@ module.exports = (() => {
 
                 switch (type) {
                     case 'from':
-                        queryRef = db.collection('transactions')
+                        queryRef = tokiumFirestore.collection('transactions')
                             .where('from', '==', this.uid)
                             .limit(limit);
                         break;
                     case 'to':
-                        queryRef = db.collection('transactions')
+                        queryRef = tokiumFirestore.collection('transactions')
                             .where('to', '==', this.uid)
                             .limit(limit);
                         break;
@@ -149,11 +149,11 @@ module.exports = (() => {
 
         _startSession(firebaseUserInfo) {
             return new Promise((resolve, reject) => {
-                firebase.auth().currentUser.getIdToken().then(token => {
+                tokiumFirebase.auth().currentUser.getIdToken().then(token => {
                     // Set authToken on Tokium API.
                     TokiumAPI.setAuthToken(token);
 
-                    let userSession = firebase.auth().currentUser;
+                    let userSession = tokiumFirebase.auth().currentUser;
                     this.uid = userSession.uid;
                     this.email = userSession.email;
                     this.authToken = token;
@@ -232,7 +232,7 @@ module.exports = (() => {
 
         _getUserProfile() {
             return new Promise((resolve, reject) => {
-                let docRef = db.collection('users').doc(this.uid);
+                let docRef = tokiumFirestore.collection('users').doc(this.uid);
 
                 docRef.get().then(doc => {
                     if (doc.exists) {
@@ -249,7 +249,7 @@ module.exports = (() => {
 
         _getUserWallets() {
             return new Promise((resolve, reject) => {
-                var queryRef = db.collection('asset_accounts').where('owner', '==', this.uid);
+                var queryRef = tokiumFirestore.collection('asset_accounts').where('owner', '==', this.uid);
 
                 queryRef.get().then(querySnapshot => {
                     var results = querySnapshot.docs.map(doc => {
@@ -271,7 +271,7 @@ module.exports = (() => {
         }
 
         _listenWalletChanges() {
-            var query = db.collection('asset_accounts')
+            var query = tokiumFirestore.collection('asset_accounts')
                           .where('owner', '==', this.uid);
 
             var observer = query.onSnapshot(querySnapshot => {
@@ -286,7 +286,7 @@ module.exports = (() => {
         }
 
         _listenWaitingTransactions() {
-            var query = db.collection('transactions')
+            var query = tokiumFirestore.collection('transactions')
                           .where('from', '==', this.uid)
                           .where('status', '==', 'waiting');
 
@@ -304,7 +304,7 @@ module.exports = (() => {
         }
 
         _listenUserProfile() {
-            var query = db.collection('users').doc(this.uid);
+            var query = tokiumFirestore.collection('users').doc(this.uid);
 
             var observer = query.onSnapshot(querySnapshot => {
                 let profile = querySnapshot.data();

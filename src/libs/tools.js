@@ -1,6 +1,6 @@
 function getAssetsList(uid) {
     return new Promise(function(resolve, reject) {
-        var queryRef = uid ? db.collection('assets').where('owner', '==', uid) : db.collection('assets');
+        var queryRef = uid ? tokiumFirestore.collection('assets').where('owner', '==', uid) : tokiumFirestore.collection('assets');
 
         queryRef.get().then(querySnapshot => {
             var assetNamesArray = querySnapshot.docs.map(doc => {
