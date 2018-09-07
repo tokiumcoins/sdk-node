@@ -105,6 +105,48 @@ module.exports = function () {
                 });
             }
         }, {
+            key: 'reissuance',
+            value: function reissuance(reissuranceInfo, wallet) {
+                var _this3 = this;
+
+                return new Promise(function (resolve, reject) {
+                    if (_this3.status === 'needinit') {
+                        reject('The asset need to be inited firstly.');
+                        return;
+                    }
+
+                    if (_this3.status !== 'exists') {
+                        reject('The asset need to exist before.');
+                        return;
+                    }
+
+                    if (wallet.asset.assetName !== _this3.assetName) {
+                        reject('You can\'t reissue assets with defined wallet.');
+                        return;
+                    }
+
+                    if (!reissuranceInfo.amount || !reissuranceInfo.toAddress) {
+                        reject('Reissurance amount and toAddress are not defined.');
+                        return;
+                    }
+
+                    TokiumAPI.assetReissuance(_this3.server, {
+                        walletPin: wallet.walletPin,
+                        privateKey: wallet.privateKey,
+                        transactionInfo: {
+                            fromAddress: wallet.address,
+                            toAddress: reissuranceInfo.toAddress,
+                            assetName: _this3.assetName,
+                            amount: reissuranceInfo.amount
+                        }
+                    }).then(function () {
+                        resolve();
+                    }).catch(function (err) {
+                        reject(err);
+                    });
+                });
+            }
+        }, {
             key: '_getAssetInfo',
             value: function _getAssetInfo(assetName) {
                 return new Promise(function (resolve, reject) {

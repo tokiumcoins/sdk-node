@@ -161,6 +161,33 @@ function assetCreate(host, data) {
     });
 }
 
+function assetReissuance(host, data) {
+    return new Promise(function(resolve, reject) {
+        if (!data.privateKey || !data.transactionInfo) {
+            reject('Empty params.');
+            return;
+        }
+
+        if (!data.transactionInfo.fromAddress || !data.transactionInfo.toAddress || !data.transactionInfo.assetName || !data.transactionInfo.amount) {
+            reject('Invalid transaction info.');
+            return;
+        }
+
+        var uri = host + '/asset/reissuance';
+
+        post(uri, data).then(function(result) {
+            if (!result.success) {
+                reject(result.message);
+                return;
+            }
+
+            resolve(result.data);
+        }).catch(function() {
+            reject('There was an error requesting to tokium API.');
+        });
+    });
+}
+
 function get(uri) {
     return new Promise(function(resolve, reject) {
         var options = {
@@ -214,11 +241,12 @@ function setAuthToken(authToken) {
 }
 
 module.exports = {
-    walletCreate:            walletCreate,
-    walletBalance:           walletBalance,
-    transactionRequest:      transactionRequest,
-    transactionInitExplicit: transactionInitExplicit,
-    transactionInitImplicit: transactionInitImplicit,
-    assetCreate:             assetCreate,
-    setAuthToken:            setAuthToken
+    walletCreate,
+    walletBalance,
+    transactionRequest,
+    transactionInitExplicit,
+    transactionInitImplicit,
+    assetCreate,
+    assetReissuance,
+    setAuthToken
 }

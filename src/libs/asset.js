@@ -90,6 +90,45 @@ module.exports = (() => {
             });
         }
 
+        reissuance(reissuranceInfo, wallet) {
+            return new Promise((resolve, reject) => {
+                if (this.status === 'needinit') {
+                    reject('The asset need to be inited firstly.');
+                    return;
+                }
+
+                if (this.status !== 'exists') {
+                    reject('The asset need to exist before.');
+                    return;
+                }
+
+                if (wallet.asset.assetName !== this.assetName) {
+                    reject('You can\'t reissue assets with defined wallet.');
+                    return;
+                }
+
+                if (!reissuranceInfo.amount || !reissuranceInfo.toAddress) {
+                    reject('Reissurance amount and toAddress are not defined.');
+                    return;
+                }
+
+                TokiumAPI.assetReissuance(this.server, {
+                    walletPin: wallet.walletPin,
+                    privateKey: wallet.privateKey,
+                    transactionInfo: {
+                        fromAddress: wallet.address,
+                        toAddress: reissuranceInfo.toAddress,
+                        assetName: this.assetName,
+                        amount: reissuranceInfo.amount
+                    }
+                }).then(() => {
+                    resolve();
+                }).catch(err => {
+                    reject(err);
+                });
+            });
+        }
+
         _getAssetInfo(assetName) {
             return new Promise((resolve, reject) => {
                 var docRef = tokiumFirestore.collection('assets').doc(assetName);
