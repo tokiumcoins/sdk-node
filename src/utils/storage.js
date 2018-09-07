@@ -1,4 +1,9 @@
-const Expo = global.Expo || null;
+let Expo = null;
+
+try {
+    Expo = require('expo');
+} catch(e) {}
+
 const AsyncStorage = global.AsyncStorage || null;
 const localStorage = global.localStorage || null;
 
@@ -99,18 +104,14 @@ class ExpoSecureStorage {
     };
 
     getItem(key) {
-        return new Promise((resolve) => {
-            localStorage.getItemAsync(key, {
-                keychainService: 'tokiumSecureStorage'
-            });
+        return Expo.SecureStore.getItemAsync(key, {
+            keychainService: 'tokiumSecureStorage'
         });
     };
 
     removeItem(key) {
-        return new Promise((resolve) => {
-            localStorage.deleteItemAsync(key, {
-                keychainService: 'tokiumSecureStorage'
-            });
+        return Expo.SecureStore.deleteItemAsync(key, {
+            keychainService: 'tokiumSecureStorage'
         });
     };
 }
