@@ -13,18 +13,19 @@ module.exports = (() => {
             this.status         = 'needlogin';
 
             this.listeners = [];
+
+            this._listenAuthChanges();
         }
 
         login(email, password) {
             return new Promise((resolve, reject) => {
-                if (this.status === 'loggedin') {
-                    reject('You have already loggedin.');
-                }
-
-                tokiumFirebase.auth().signInWithEmailAndPassword(email, password).then(firebaseUserInfo => {
-                    this._startSession(firebaseUserInfo).then(() => {
+                tokiumFirebase.auth().signInWithEmailAndPassword(email, password).then(() => {
+                    const handler = () => {
                         resolve();
-                    });
+                        tokiumEvents.removeListener('user-logged-in', handler);
+                    };
+
+                    tokiumEvents.on('user-logged-in', handler);
                 }).catch(err => {
                     reject(err.message);
                 });
@@ -37,10 +38,13 @@ module.exports = (() => {
                     reject('You have already loggedin.');
                 }
 
-                tokiumFirebase.auth().createUserWithEmailAndPassword(email, password).then(firebaseUserInfo => {
-                    this._startSession(firebaseUserInfo).then(() => {
+                tokiumFirebase.auth().createUserWithEmailAndPassword(email, password).then(() => {
+                    const handler = () => {
                         resolve();
-                    });
+                        tokiumEvents.removeListener('user-logged-in', handler);
+                    };
+
+                    tokiumEvents.on('user-logged-in', handler);
                 }).catch(err => {
                     reject(err.message);
                 });
@@ -54,16 +58,12 @@ module.exports = (() => {
                 }
 
                 tokiumFirebase.auth().signOut().then(() => {
-                    this.uid            = null;
-                    this.email          = null;
-                    this.allowedAssets  = null;
-                    this.authToken      = null;
-                    this.wallets        = [];
-                    this.status         = 'needlogin';
+                    const handler = () => {
+                        resolve();
+                        tokiumEvents.removeListener('user-logged-out', handler);
+                    };
 
-                    this._clearListeners();
-
-                    resolve();
+                    tokiumEvents.on('user-logged-out', handler);
                 }).catch(err => {
                     reject(err.message);
                 });
@@ -147,13 +147,36 @@ module.exports = (() => {
             });
         }
 
-        _startSession(firebaseUserInfo) {
+        _listenAuthChanges() {
+            tokiumFirebase.auth().onAuthStateChanged(user => {
+                if (user) {
+                    // User is signed in.
+                    this._clearListeners();
+
+                    this._startSession(user).then(() => {
+                        tokiumEvents.emit('user-logged-in', this);
+                    });
+                } else {
+                    // User is signed out.
+                    this.uid            = null;
+                    this.email          = null;
+                    this.allowedAssets  = null;
+                    this.authToken      = null;
+                    this.wallets        = [];
+                    this.status         = 'needlogin';
+
+                    this._clearListeners();
+                    tokiumEvents.emit('user-logged-out', this);
+                }
+            });
+        }
+
+        _startSession(userSession) {
             return new Promise((resolve, reject) => {
-                tokiumFirebase.auth().currentUser.getIdToken().then(token => {
+                userSession.getIdToken().then(token => {
                     // Set authToken on Tokium API.
                     TokiumAPI.setAuthToken(token);
 
-                    let userSession = tokiumFirebase.auth().currentUser;
                     this.uid = userSession.uid;
                     this.email = userSession.email;
                     this.authToken = token;
@@ -172,7 +195,7 @@ module.exports = (() => {
                 listener();
             });
 
-            this.listener = [];
+            this.listeners = [];
         }
 
         _composeWallets(wallets) {

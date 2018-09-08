@@ -21,22 +21,21 @@ module.exports = function () {
             this.status = 'needlogin';
 
             this.listeners = [];
+
+            this._listenAuthChanges();
         }
 
         _createClass(Profile, [{
             key: 'login',
             value: function login(email, password) {
-                var _this = this;
-
                 return new Promise(function (resolve, reject) {
-                    if (_this.status === 'loggedin') {
-                        reject('You have already loggedin.');
-                    }
-
-                    tokiumFirebase.auth().signInWithEmailAndPassword(email, password).then(function (firebaseUserInfo) {
-                        _this._startSession(firebaseUserInfo).then(function () {
+                    tokiumFirebase.auth().signInWithEmailAndPassword(email, password).then(function () {
+                        var handler = function handler() {
                             resolve();
-                        });
+                            tokiumEvents.removeListener('user-logged-in', handler);
+                        };
+
+                        tokiumEvents.on('user-logged-in', handler);
                     }).catch(function (err) {
                         reject(err.message);
                     });
@@ -45,17 +44,20 @@ module.exports = function () {
         }, {
             key: 'signup',
             value: function signup(email, password) {
-                var _this2 = this;
+                var _this = this;
 
                 return new Promise(function (resolve, reject) {
-                    if (_this2.status === 'loggedin') {
+                    if (_this.status === 'loggedin') {
                         reject('You have already loggedin.');
                     }
 
-                    tokiumFirebase.auth().createUserWithEmailAndPassword(email, password).then(function (firebaseUserInfo) {
-                        _this2._startSession(firebaseUserInfo).then(function () {
+                    tokiumFirebase.auth().createUserWithEmailAndPassword(email, password).then(function () {
+                        var handler = function handler() {
                             resolve();
-                        });
+                            tokiumEvents.removeListener('user-logged-in', handler);
+                        };
+
+                        tokiumEvents.on('user-logged-in', handler);
                     }).catch(function (err) {
                         reject(err.message);
                     });
@@ -64,24 +66,20 @@ module.exports = function () {
         }, {
             key: 'logout',
             value: function logout() {
-                var _this3 = this;
+                var _this2 = this;
 
                 return new Promise(function (resolve, reject) {
-                    if (_this3.status === 'needlogin') {
+                    if (_this2.status === 'needlogin') {
                         reject('You have already logout.');
                     }
 
                     tokiumFirebase.auth().signOut().then(function () {
-                        _this3.uid = null;
-                        _this3.email = null;
-                        _this3.allowedAssets = null;
-                        _this3.authToken = null;
-                        _this3.wallets = [];
-                        _this3.status = 'needlogin';
+                        var handler = function handler() {
+                            resolve();
+                            tokiumEvents.removeListener('user-logged-out', handler);
+                        };
 
-                        _this3._clearListeners();
-
-                        resolve();
+                        tokiumEvents.on('user-logged-out', handler);
                     }).catch(function (err) {
                         reject(err.message);
                     });
@@ -95,11 +93,11 @@ module.exports = function () {
         }, {
             key: 'getWallets',
             value: function getWallets() {
-                var _this4 = this;
+                var _this3 = this;
 
                 return new Promise(function (resolve, reject) {
-                    _this4._getUserWallets().then(function (wallets) {
-                        _this4._composeWallets(wallets).then(function () {
+                    _this3._getUserWallets().then(function (wallets) {
+                        _this3._composeWallets(wallets).then(function () {
                             resolve();
                         }).catch(function (err) {
                             reject(err);
@@ -119,7 +117,7 @@ module.exports = function () {
         }, {
             key: 'getTransactions',
             value: function getTransactions(type, limit) {
-                var _this5 = this;
+                var _this4 = this;
 
                 return new Promise(function (resolve, reject) {
                     limit = limit || 100;
@@ -128,10 +126,10 @@ module.exports = function () {
 
                     switch (type) {
                         case 'from':
-                            queryRef = tokiumFirestore.collection('transactions').where('from', '==', _this5.uid).limit(limit);
+                            queryRef = tokiumFirestore.collection('transactions').where('from', '==', _this4.uid).limit(limit);
                             break;
                         case 'to':
-                            queryRef = tokiumFirestore.collection('transactions').where('to', '==', _this5.uid).limit(limit);
+                            queryRef = tokiumFirestore.collection('transactions').where('to', '==', _this4.uid).limit(limit);
                             break;
                         default:
                             reject('You need to define transactions type (from or to).');
@@ -143,7 +141,7 @@ module.exports = function () {
                             return doc.id;
                         });
 
-                        _this5._composeTransactions(transactionKeys).then(function (transactions) {
+                        _this4._composeTransactions(transactionKeys).then(function (transactions) {
                             resolve(transactions);
                         }).catch(function (err) {
                             reject(err);
@@ -157,14 +155,14 @@ module.exports = function () {
         }, {
             key: 'getMyAssets',
             value: function getMyAssets() {
-                var _this6 = this;
+                var _this5 = this;
 
                 return new Promise(function (resolve, reject) {
-                    if (_this6.status === 'needlogin') {
+                    if (_this5.status === 'needlogin') {
                         reject('You need to login before.');
                     }
 
-                    Tools.getAssetsList(_this6.uid).then(function (assets) {
+                    Tools.getAssetsList(_this5.uid).then(function (assets) {
                         resolve(assets);
                     }).catch(function (err) {
                         reject(err);
@@ -172,16 +170,42 @@ module.exports = function () {
                 });
             }
         }, {
+            key: '_listenAuthChanges',
+            value: function _listenAuthChanges() {
+                var _this6 = this;
+
+                tokiumFirebase.auth().onAuthStateChanged(function (user) {
+                    if (user) {
+                        // User is signed in.
+                        _this6._clearListeners();
+
+                        _this6._startSession(user).then(function () {
+                            tokiumEvents.emit('user-logged-in', _this6);
+                        });
+                    } else {
+                        // User is signed out.
+                        _this6.uid = null;
+                        _this6.email = null;
+                        _this6.allowedAssets = null;
+                        _this6.authToken = null;
+                        _this6.wallets = [];
+                        _this6.status = 'needlogin';
+
+                        _this6._clearListeners();
+                        tokiumEvents.emit('user-logged-out', _this6);
+                    }
+                });
+            }
+        }, {
             key: '_startSession',
-            value: function _startSession(firebaseUserInfo) {
+            value: function _startSession(userSession) {
                 var _this7 = this;
 
                 return new Promise(function (resolve, reject) {
-                    tokiumFirebase.auth().currentUser.getIdToken().then(function (token) {
+                    userSession.getIdToken().then(function (token) {
                         // Set authToken on Tokium API.
                         TokiumAPI.setAuthToken(token);
 
-                        var userSession = tokiumFirebase.auth().currentUser;
                         _this7.uid = userSession.uid;
                         _this7.email = userSession.email;
                         _this7.authToken = token;
@@ -201,7 +225,7 @@ module.exports = function () {
                     listener();
                 });
 
-                this.listener = [];
+                this.listeners = [];
             }
         }, {
             key: '_composeWallets',
