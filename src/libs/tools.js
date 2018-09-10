@@ -1,6 +1,9 @@
+import { firestore } from '../utils/services.js';
+import Asset from './asset.js';
+
 function getAssetsList(uid) {
     return new Promise(function(resolve, reject) {
-        var queryRef = uid ? tokiumFirestore.collection('assets').where('owner', '==', uid) : tokiumFirestore.collection('assets');
+        var queryRef = uid ? firestore.collection('assets').where('owner', '==', uid) : firestore.collection('assets');
 
         queryRef.get().then(querySnapshot => {
             var assetNamesArray = querySnapshot.docs.map(doc => {
@@ -21,8 +24,6 @@ function getAssetsList(uid) {
 
 function _composeAssets(assetNamesArray) {
     return new Promise((resolve, reject) => {
-        let Asset = require('./asset.js');
-
         let assets = [];
         let promisesArray = [];
 
@@ -45,6 +46,6 @@ function _composeAssets(assetNamesArray) {
     });
 }
 
-module.exports = {
-    getAssetsList: getAssetsList
-}
+export {
+    getAssetsList
+};
