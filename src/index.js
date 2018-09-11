@@ -1,37 +1,13 @@
-// Fix for react-native
-if (!global.self) {
-    global.self = global;
-}
+import { eventsEmitter } from './utils/services.js';
+import * as Tools from './libs/tools.js';
+import Wallet from './libs/wallet.js';
+import Transaction from './libs/transaction.js';
+import Asset from './libs/asset.js';
+import Profile from './libs/profile.js';
 
-const events = require('events');
-global.tokiumEvents = global.tokiumEvents || new events.EventEmitter();
-
-const FIREBASE_CONFIG = {
-    apiKey: 'AIzaSyASn4mvQQjAAe5IvsWYEUQcI1odtUsIZHU',
-    authDomain: 'blockchain-tokens.firebaseapp.com',
-    databaseURL: 'https://blockchain-tokens.firebaseio.com',
-    projectId: 'blockchain-tokens'
+const on = (...args) => {
+    eventsEmitter.on(...args);
 };
-
-// Init Firebase and Firestore
-import '@firebase/firestore';
-import '@firebase/auth';
-import firebase from '@firebase/app';
-
-global.tokiumFirebase = firebase;
-
-tokiumFirebase.initializeApp(FIREBASE_CONFIG);
-
-// Init tokiumFirestore.
-global.tokiumFirestore = tokiumFirebase.firestore();
-const settings = { timestampsInSnapshots: true };
-tokiumFirestore.settings(settings);
-
-let Asset = require('./libs/asset.js');
-let Profile = require('./libs/profile.js');
-let Transaction = require('./libs/transaction.js');
-let Wallet = require('./libs/wallet.js');
-let Tools = require('./libs/tools.js');
 
 module.exports = {
     Asset:          Asset,
@@ -39,5 +15,6 @@ module.exports = {
     Transaction:    Transaction,
     Wallet:         Wallet,
     Tools:          Tools,
-    currentUser:    new Profile()
+    currentUser:    new Profile(),
+    on:             on
 };

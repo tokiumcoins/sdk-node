@@ -1,53 +1,41 @@
 'use strict';
 
-require('@firebase/firestore');
+var _services = require('./utils/services.js');
 
-require('@firebase/auth');
+var _tools = require('./libs/tools.js');
 
-var _app = require('@firebase/app');
+var Tools = _interopRequireWildcard(_tools);
 
-var _app2 = _interopRequireDefault(_app);
+var _wallet = require('./libs/wallet.js');
+
+var _wallet2 = _interopRequireDefault(_wallet);
+
+var _transaction = require('./libs/transaction.js');
+
+var _transaction2 = _interopRequireDefault(_transaction);
+
+var _asset = require('./libs/asset.js');
+
+var _asset2 = _interopRequireDefault(_asset);
+
+var _profile = require('./libs/profile.js');
+
+var _profile2 = _interopRequireDefault(_profile);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// Fix for react-native
-if (!global.self) {
-    global.self = global;
-}
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
-var events = require('events');
-global.tokiumEvents = global.tokiumEvents || new events.EventEmitter();
-
-var FIREBASE_CONFIG = {
-    apiKey: 'AIzaSyASn4mvQQjAAe5IvsWYEUQcI1odtUsIZHU',
-    authDomain: 'blockchain-tokens.firebaseapp.com',
-    databaseURL: 'https://blockchain-tokens.firebaseio.com',
-    projectId: 'blockchain-tokens'
+var on = function on() {
+    _services.eventsEmitter.on.apply(_services.eventsEmitter, arguments);
 };
 
-// Init Firebase and Firestore
-
-
-global.tokiumFirebase = _app2.default;
-
-tokiumFirebase.initializeApp(FIREBASE_CONFIG);
-
-// Init tokiumFirestore.
-global.tokiumFirestore = tokiumFirebase.firestore();
-var settings = { timestampsInSnapshots: true };
-tokiumFirestore.settings(settings);
-
-var Asset = require('./libs/asset.js');
-var Profile = require('./libs/profile.js');
-var Transaction = require('./libs/transaction.js');
-var Wallet = require('./libs/wallet.js');
-var Tools = require('./libs/tools.js');
-
 module.exports = {
-    Asset: Asset,
-    Profile: Profile,
-    Transaction: Transaction,
-    Wallet: Wallet,
+    Asset: _asset2.default,
+    Profile: _profile2.default,
+    Transaction: _transaction2.default,
+    Wallet: _wallet2.default,
     Tools: Tools,
-    currentUser: new Profile()
+    currentUser: new _profile2.default(),
+    on: on
 };
