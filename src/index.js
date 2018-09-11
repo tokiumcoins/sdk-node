@@ -1,7 +1,5 @@
 // Fix for react-native
-if (!global.self) {
-    global.self = global;
-}
+import './utils/fix.js';
 
 import { eventsEmitter } from './utils/services.js';
 import * as Tools from './libs/tools.js';
