@@ -1,3 +1,8 @@
+// Fix for react-native
+if (!global.self) {
+    global.self = global;
+}
+
 import { eventsEmitter } from './utils/services.js';
 import * as Tools from './libs/tools.js';
 import Wallet from './libs/wallet.js';
