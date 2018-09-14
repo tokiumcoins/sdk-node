@@ -1,4 +1,4 @@
-var fetch = require('node-fetch');
+require('cross-fetch/polyfill');
 
 var authorizationToken = null;
 

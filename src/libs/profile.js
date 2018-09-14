@@ -21,6 +21,19 @@ export default class Profile {
 
     login(email, password) {
         return new Promise((resolve, reject) => {
+
+            // User already have session.
+            if (firebase.auth().currentUser && firebase.auth().currentUser.email === email) {
+                // User is signed in.
+                this._clearListeners();
+
+                this._startSession(firebase.auth().currentUser).then(() => {
+                    eventsEmitter.emit('user-logged-in', this);
+                });
+
+                return resolve();
+            }
+
             firebase.auth().signInWithEmailAndPassword(email, password).then(() => {
                 const handler = () => {
                     resolve();
@@ -31,6 +44,7 @@ export default class Profile {
             }).catch(err => {
                 reject(err.message);
             });
+
         });
     }
 
