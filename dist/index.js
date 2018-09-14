@@ -1,5 +1,7 @@
 'use strict';
 
+require('./utils/fix.js');
+
 var _services = require('./utils/services.js');
 
 var _tools = require('./libs/tools.js');
@@ -26,12 +28,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
-// Fix for react-native
-//import './utils/fix.js';
-
 var on = function on() {
     _services.eventsEmitter.on.apply(_services.eventsEmitter, arguments);
-};
+}; // Fix for react-native
+
 
 module.exports = {
     Asset: _asset2.default,

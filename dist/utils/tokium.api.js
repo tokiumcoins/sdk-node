@@ -1,7 +1,6 @@
 'use strict';
 
-require('es6-promise').polyfill();
-require('fetch-everywhere');
+require('cross-fetch/polyfill');
 
 var authorizationToken = null;
 
