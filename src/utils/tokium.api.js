@@ -1,4 +1,4 @@
-const fetch = require('cross-fetch');
+require('cross-fetch/polyfill');
 
 var authorizationToken = null;
 
