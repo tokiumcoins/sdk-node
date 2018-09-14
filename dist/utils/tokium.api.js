@@ -1,6 +1,6 @@
 'use strict';
 
-var fetch = require('node-fetch');
+var fetch = require('cross-fetch');
 
 var authorizationToken = null;
 

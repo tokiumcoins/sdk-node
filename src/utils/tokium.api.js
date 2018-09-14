@@ -1,4 +1,4 @@
-var fetch = require('node-fetch');
+const fetch = require('cross-fetch');
 
 var authorizationToken = null;
 

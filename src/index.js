@@ -1,5 +1,5 @@
 // Fix for react-native
-import './utils/fix.js';
+//import './utils/fix.js';
 
 import { eventsEmitter } from './utils/services.js';
 import * as Tools from './libs/tools.js';

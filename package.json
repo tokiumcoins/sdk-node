@@ -22,8 +22,8 @@
     "@firebase/app": "^0.3.3",
     "@firebase/auth": "^0.7.4",
     "@firebase/firestore": "^0.7.2",
-    "events": "^2.0.0",
-    "node-fetch": "^2.1.2"
+    "cross-fetch": "^2.2.2",
+    "events": "^2.0.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
