@@ -47,7 +47,22 @@ var Profile = function () {
     _createClass(Profile, [{
         key: 'login',
         value: function login(email, password) {
+            var _this = this;
+
             return new Promise(function (resolve, reject) {
+
+                // User already have session.
+                if (_services.firebase.auth().currentUser && _services.firebase.auth().currentUser.email === email) {
+                    // User is signed in.
+                    _this._clearListeners();
+
+                    _this._startSession(_services.firebase.auth().currentUser).then(function () {
+                        _services.eventsEmitter.emit('user-logged-in', _this);
+                    });
+
+                    return resolve();
+                }
+
                 _services.firebase.auth().signInWithEmailAndPassword(email, password).then(function () {
                     var handler = function handler() {
                         resolve();
@@ -63,10 +78,10 @@ var Profile = function () {
     }, {
         key: 'signup',
         value: function signup(email, password) {
-            var _this = this;
+            var _this2 = this;
 
             return new Promise(function (resolve, reject) {
-                if (_this.status === 'loggedin') {
+                if (_this2.status === 'loggedin') {
                     reject('You have already loggedin.');
                 }
 
@@ -85,10 +100,10 @@ var Profile = function () {
     }, {
         key: 'logout',
         value: function logout() {
-            var _this2 = this;
+            var _this3 = this;
 
             return new Promise(function (resolve, reject) {
-                if (_this2.status === 'needlogin') {
+                if (_this3.status === 'needlogin') {
                     reject('You have already logout.');
                 }
 
@@ -112,11 +127,11 @@ var Profile = function () {
     }, {
         key: 'getWallets',
         value: function getWallets() {
-            var _this3 = this;
+            var _this4 = this;
 
             return new Promise(function (resolve, reject) {
-                _this3._getUserWallets().then(function (wallets) {
-                    _this3._composeWallets(wallets).then(function () {
+                _this4._getUserWallets().then(function (wallets) {
+                    _this4._composeWallets(wallets).then(function () {
                         resolve();
                     }).catch(function (err) {
                         reject(err);
@@ -136,7 +151,7 @@ var Profile = function () {
     }, {
         key: 'getTransactions',
         value: function getTransactions(type, limit) {
-            var _this4 = this;
+            var _this5 = this;
 
             return new Promise(function (resolve, reject) {
                 limit = limit || 100;
@@ -145,10 +160,10 @@ var Profile = function () {
 
                 switch (type) {
                     case 'from':
-                        queryRef = _services.firestore.collection('transactions').where('from', '==', _this4.uid).limit(limit);
+                        queryRef = _services.firestore.collection('transactions').where('from', '==', _this5.uid).limit(limit);
                         break;
                     case 'to':
-                        queryRef = _services.firestore.collection('transactions').where('to', '==', _this4.uid).limit(limit);
+                        queryRef = _services.firestore.collection('transactions').where('to', '==', _this5.uid).limit(limit);
                         break;
                     default:
                         reject('You need to define transactions type (from or to).');
@@ -160,7 +175,7 @@ var Profile = function () {
                         return doc.id;
                     });
 
-                    _this4._composeTransactions(transactionKeys).then(function (transactions) {
+                    _this5._composeTransactions(transactionKeys).then(function (transactions) {
                         resolve(transactions);
                     }).catch(function (err) {
                         reject(err);
@@ -174,14 +189,14 @@ var Profile = function () {
     }, {
         key: 'getMyAssets',
         value: function getMyAssets() {
-            var _this5 = this;
+            var _this6 = this;
 
             return new Promise(function (resolve, reject) {
-                if (_this5.status === 'needlogin') {
+                if (_this6.status === 'needlogin') {
                     reject('You need to login before.');
                 }
                 console.info(Tools);
-                Tools.getAssetsList(_this5.uid).then(function (assets) {
+                Tools.getAssetsList(_this6.uid).then(function (assets) {
                     resolve(assets);
                 }).catch(function (err) {
                     reject(err);
@@ -191,47 +206,47 @@ var Profile = function () {
     }, {
         key: '_listenAuthChanges',
         value: function _listenAuthChanges() {
-            var _this6 = this;
+            var _this7 = this;
 
             _services.firebase.auth().onAuthStateChanged(function (user) {
                 if (user) {
                     // User is signed in.
-                    _this6._clearListeners();
+                    _this7._clearListeners();
 
-                    _this6._startSession(user).then(function () {
-                        _services.eventsEmitter.emit('user-logged-in', _this6);
+                    _this7._startSession(user).then(function () {
+                        _services.eventsEmitter.emit('user-logged-in', _this7);
                     });
                 } else {
                     // User is signed out.
-                    _this6.uid = null;
-                    _this6.email = null;
-                    _this6.allowedAssets = null;
-                    _this6.authToken = null;
-                    _this6.wallets = [];
-                    _this6.status = 'needlogin';
+                    _this7.uid = null;
+                    _this7.email = null;
+                    _this7.allowedAssets = null;
+                    _this7.authToken = null;
+                    _this7.wallets = [];
+                    _this7.status = 'needlogin';
 
-                    _this6._clearListeners();
-                    _services.eventsEmitter.emit('user-logged-out', _this6);
+                    _this7._clearListeners();
+                    _services.eventsEmitter.emit('user-logged-out', _this7);
                 }
             });
         }
     }, {
         key: '_startSession',
         value: function _startSession(userSession) {
-            var _this7 = this;
+            var _this8 = this;
 
             return new Promise(function (resolve, reject) {
                 userSession.getIdToken().then(function (token) {
                     // Set authToken on Tokium API.
                     TokiumAPI.setAuthToken(token);
 
-                    _this7.uid = userSession.uid;
-                    _this7.email = userSession.email;
-                    _this7.authToken = token;
+                    _this8.uid = userSession.uid;
+                    _this8.email = userSession.email;
+                    _this8.authToken = token;
 
-                    _this7.status = 'loggedin';
+                    _this8.status = 'loggedin';
 
-                    _this7._startListeners();
+                    _this8._startListeners();
 
                     resolve();
                 });
@@ -249,15 +264,15 @@ var Profile = function () {
     }, {
         key: '_composeWallets',
         value: function _composeWallets(wallets) {
-            var _this8 = this;
+            var _this9 = this;
 
             return new Promise(function (resolve, reject) {
-                _this8.wallets = [];
+                _this9.wallets = [];
                 var promisesArray = [];
 
                 wallets.forEach(function (wallet) {
                     var walletObj = new _wallet2.default();
-                    _this8.wallets.push(walletObj);
+                    _this9.wallets.push(walletObj);
 
                     var promise = walletObj.init({
                         privateKey: wallet.private_key,
@@ -269,7 +284,7 @@ var Profile = function () {
                 });
 
                 Promise.all(promisesArray).then(function () {
-                    _services.eventsEmitter.emit('wallets-changed', _this8);
+                    _services.eventsEmitter.emit('wallets-changed', _this9);
                     resolve();
                 }).catch(function (err) {
                     reject(err);
@@ -304,10 +319,10 @@ var Profile = function () {
     }, {
         key: '_getUserProfile',
         value: function _getUserProfile() {
-            var _this9 = this;
+            var _this10 = this;
 
             return new Promise(function (resolve, reject) {
-                var docRef = _services.firestore.collection('users').doc(_this9.uid);
+                var docRef = _services.firestore.collection('users').doc(_this10.uid);
 
                 docRef.get().then(function (doc) {
                     if (doc.exists) {
@@ -324,10 +339,10 @@ var Profile = function () {
     }, {
         key: '_getUserWallets',
         value: function _getUserWallets() {
-            var _this10 = this;
+            var _this11 = this;
 
             return new Promise(function (resolve, reject) {
-                var queryRef = _services.firestore.collection('asset_accounts').where('owner', '==', _this10.uid);
+                var queryRef = _services.firestore.collection('asset_accounts').where('owner', '==', _this11.uid);
 
                 queryRef.get().then(function (querySnapshot) {
                     var results = querySnapshot.docs.map(function (doc) {
@@ -351,7 +366,7 @@ var Profile = function () {
     }, {
         key: '_listenWalletChanges',
         value: function _listenWalletChanges() {
-            var _this11 = this;
+            var _this12 = this;
 
             var query = _services.firestore.collection('asset_accounts').where('owner', '==', this.uid);
 
@@ -360,7 +375,7 @@ var Profile = function () {
                     return doc.data();
                 });
 
-                _this11._composeWallets(wallets);
+                _this12._composeWallets(wallets);
             });
 
             return observer;
@@ -368,7 +383,7 @@ var Profile = function () {
     }, {
         key: '_listenWaitingTransactions',
         value: function _listenWaitingTransactions() {
-            var _this12 = this;
+            var _this13 = this;
 
             var query = _services.firestore.collection('transactions').where('from', '==', this.uid).where('status', '==', 'waiting');
 
@@ -377,7 +392,7 @@ var Profile = function () {
                     return doc.id;
                 });
 
-                _this12._composeTransactions(transactionKeys).then(function (transactions) {
+                _this13._composeTransactions(transactionKeys).then(function (transactions) {
                     _services.eventsEmitter.emit('waiting-transactions-changed', transactions);
                 });
             });
@@ -387,7 +402,7 @@ var Profile = function () {
     }, {
         key: '_listenUserProfile',
         value: function _listenUserProfile() {
-            var _this13 = this;
+            var _this14 = this;
 
             var query = _services.firestore.collection('users').doc(this.uid);
 
@@ -395,8 +410,8 @@ var Profile = function () {
                 var profile = querySnapshot.data();
 
                 if (profile) {
-                    _this13.allowedAssets = profile.allowedAssets;
-                    _services.eventsEmitter.emit('profile-changed', _this13);
+                    _this14.allowedAssets = profile.allowedAssets;
+                    _services.eventsEmitter.emit('profile-changed', _this14);
                 }
             });
 
