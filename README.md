@@ -1,9 +1,238 @@
-# ``Profile``
+
+# General description
+
+Tokium is a SDK that allows to develop blockchain based apps easily without a big technical knowledge of blockchain. Tokium uses a private blockchain hosted on AWS and hosts all assets inside this network.
+
+At this moment, Tokium supports these features:
+
+- Create new accounts.
+- Create new assets.
+- Create new wallets.
+- Secure wallet keys inside secure storage.
+- Make transactions.
+
+On this guide, we will all Tokium current features. If you need help with our SDK you can contact us on [hello@tokium.one](mailto:hello@tokium.one).
+
+## User Dashboard - Create Asset
+
+The first step to use Tokium SDK is create an account and a new asset. You can create a new Tokium account on our [User Dashboard](https://profile.tokium.one). Click Sign Up and create a new account. All account are limited to create only one new asset. If you need to extend your quota, you can contact with us on [hello@tokium.one](mailto:hello@tokium.one).
+
+With your account registered, you can create your first asset. You only have to go to [New Asset](https://profile.tokium.one/newasset) and insert your **Asset Name**, **the amount of asset that you will create** (you can create more in the feature), and a **URL to the background image of your asset card**. **When you click on Create, you will receive your Address and Private key. Save them on a safe place. You won't recover Private key and you need it to create more assets in the future and make transactions from your wallet.**
+
+You can see now your new wallet on **My Wallets** section.
+
+## Environment
+
+Tokium has been developed to be compatible with React and React Native. You can use the SDK with more platforms, but we don't guarantee the correct behavior. We will integrate Tokium on more platforms in the future.
+
+To integrate Tokium SDK on your project you need to start a new React  / React Native app. You can check React / React Native documentation on the next links:
+
+[https://github.com/facebook/create-react-app](https://github.com/facebook/create-react-app)
+[https://github.com/react-community/create-react-native-app](https://github.com/react-community/create-react-native-app)
+[https://expo.io/learn](https://expo.io/learn)
+
+Then, you need to install Tokium SDK:
+
+```sh
+npm install --save https://gitlab.com/Tokium/sdk-node.git
+```
+
+With NPM dependency installed, you can start to use Tokium SDK on your React / React Native app:
 
 ```js
-const Tokium = require('sdk-node');
-let Profile = Tokium.Profile();
-let profile = new Profile();
+import Tokium from 'sdk-node';
+
+const currentUser = Tokium.currentUser;
+currentUser.login('email@email.com', 'password').then(() => {
+    console.info(profile);
+}).catch(err => {
+    console.error(err);
+});
+```
+
+## Tokium SDK features
+
+### Create new account
+
+```js
+import Tokium from 'sdk-node';
+
+const profile = new Tokium.Profile();
+profile.signup('email@email.com', 'password').then(() => {
+    console.info(profile);
+}).catch(err => {
+    console.error(err);
+});
+```
+
+### Login
+
+```js
+import Tokium from 'sdk-node';
+
+const currentUser = Tokium.currentUser;
+currentUser.login('email@email.com', 'password').then(() => {
+    console.info(currentUser);
+}).catch(err => {
+    console.error(err);
+});
+```
+
+### Logout
+
+```js
+import Tokium from 'sdk-node';
+
+const currentUser = Tokium.currentUser;
+currentUser.logout().then(() => {
+    console.info(currentUser);
+}).catch(err => {
+    console.error(err);
+});
+```
+
+### Get your wallets
+
+```js
+import Tokium from 'sdk-node';
+
+const currentUser = Tokium.currentUser;
+console.info(currentUser.wallets);
+```
+
+### Create new wallet
+
+```js
+import Tokium from 'sdk-node';
+
+const wallet = new Tokium.Wallet();
+wallet.create('your-asset-name', '').then(() => {
+    console.info(wallet);
+}).catch(err => {
+    console.error(err);
+});
+```
+
+**Result:**
+
+```js
+Wallet {
+    walletPin: Int(),
+    privateKey: String(),
+    address: String(),
+    asset: Asset(),
+    balance: Int(),
+    status: String()
+}
+```
+
+**IMPORTANT**: Private Key is not saved on our systems, it's your responsibility to save it on a safe place.  You can save it on your local storage with ``Secure wallet keys inside secure storage`` Tokium SDK Feature. You can read about it on the next point.
+
+### Secure wallet keys inside secure storage
+
+This feature allows you to save private keys on a safe place inside your mobile. Your keys will be saved locally. If you change your mobile, you need to transfer the keys to the new device.
+
+When you create a new wallet, privateKey value is defined and is the best moment to execute this feature.
+
+#### Save key
+
+```js
+wallet.savePrivateKey(wallet.privateKey).then(() => {
+    console.info(wallet);
+}).catch(err => {
+    console.error(err);
+});
+```
+
+#### Get key
+
+Only works if you have saved privateKey before.
+
+```js
+wallet.savePrivateKey().then(() => {
+    console.info(wallet);
+}).catch(err => {
+    console.error(err);
+});
+```
+
+#### Technical details
+
+Tokium SDK tries to save privateKey on the safest place disponible. The default places where Tokium tries to save your keys are:
+
+- **SecureStorage**: Keychain on iOS or encrypted storage on Android. This storage will be used if you use Expo (React Native).
+- **AsyncStorage**: React Native basic storage. Unencrypted, asynchronous and persistent.
+- **LocalStorage**: React Web storage. Unencrypted, asynchronous and persistent.
+
+If you want to use an alternative storage you can overwrite ``global.storageController`` object with the next class example:
+
+```js
+class StorageMock {
+    constructor() {};
+
+    setItem(key, data) {
+        return new Promise((resolve) => {
+            resolve();
+        });
+    };
+
+    getItem(key) {
+        return new Promise((resolve) => {
+            const examplePrivKey = 'fake_priv_key';
+            resolve(examplePrivKey);
+        });
+    };
+
+    removeItem(key) {
+        return new Promise((resolve) => {
+            resolve();
+        });
+    };
+}
+```
+
+### Make transactions
+
+Transactions are composed of to steps. The first step is to report the transaction to our systems. The second step is to sign the transaction.
+
+This two steps can be done from different devices. One user can request a payment and other can sign and complete it.
+
+```js
+import Tokium from 'sdk-node';
+
+const transaction = new Tokium.Transaction()
+
+const fromWallet = {
+    address: '<from_wallet_address>',
+    privateKey: '<from_wallet_private_key>',
+    walletPin: ''
+};
+
+const txData = {
+    amount = 100,
+    assetName: '<wallet_asset_name>',
+    fromAddress: fromWallet.address,
+    toAddress: '<to_wallet_address>'
+}
+
+transaction.init(txData).then(() => {
+    transaction.initTransaction(fromWallet, true).then(() => {
+        console.info('Transaction completed!');
+    }).catch(err => {
+        console.error('Error signing transaction', err);
+    });
+}).catch(err => {
+    console.error('Error initializing transaction', err);
+});
+```
+
+# Advanced documentation
+
+## ``Profile``
+
+```js
+import Tokium from 'sdk-node';
+const profile = new Tokium.Profile();
 ```
 
 **Profile Data Model**
@@ -26,9 +255,9 @@ Profile {
 | needlogin | Need to do login(). |
 | loggedin | Loggued in, you can call logout(), and other methods. |
 
-## Methods
+### Methods
 
-### Login
+#### Login
 
 ```js
 profile.login('email@email.com', 'password').then(() => {
@@ -38,7 +267,7 @@ profile.login('email@email.com', 'password').then(() => {
 });
 ```
 
-### Logout
+#### Logout
 
 ```js
 profile.logout().then(() => {
@@ -48,13 +277,13 @@ profile.logout().then(() => {
 });
 ```
 
-### Is logged in
+#### Is logged in
 
 ```js
 let isLoggedIn = profile.isLoggedIn(); // True or false
 ```
 
-### Get Wallets
+#### Get Wallets
 
 ```js
 profile.getWallets().then(() => {
@@ -64,7 +293,7 @@ profile.getWallets().then(() => {
 });
 ```
 
-### Get Transactions
+#### Get Transactions
 
 ```js
 profile.getTransactions(type, limit).then(transactions => { // type = 'from' or 'to'
@@ -74,30 +303,40 @@ profile.getTransactions(type, limit).then(transactions => { // type = 'from' or 
 });
 ```
 
-## Events
+### Events
 
-### wallets-changed
+#### wallets-changed
 
 ```js
-tokiumEvents.on('wallets-changed', profile => {
+import Tokium from 'sdk-node';
+Tokium.on('wallets-changed', profile => {
     console.info(profile); // Profile()
 });
 ```
 
-### waiting-transactions-changed
+#### waiting-transactions-changed
 
 ```js
-tokiumEvents.on('waiting-transactions-changed', transactions => {
+import Tokium from 'sdk-node';
+Tokium.on('waiting-transactions-changed', transactions => {
     console.info(transactions); // [ Transaction(), Transaction(), ... ]
 })
 ```
 
-# ``Asset``
+#### profile-changed
 
 ```js
-const Tokium = require('sdk-node');
-let Asset = Tokium.Asset();
-let asset = new Asset();
+import Tokium from 'sdk-node';
+Tokium.on('profile-changed', profile => {
+    console.info(profile); // Profile()
+})
+```
+
+## ``Asset``
+
+```js
+import Tokium from 'sdk-node';
+const asset = new Tokium.Asset();
 ```
 
 **Asset Data Model**
@@ -122,9 +361,9 @@ Asset {
 | notexists | Asset doesn't exist on database. Need to do create(). |
 | exists | Asset exists on database. You can use it to create wallets and do transactions. |
 
-## Methods
+### Methods
 
-### init()
+#### init()
 
 ```js
 asset.init(assetData).then(() => {
@@ -148,7 +387,7 @@ let assetData = {
 
 If assetName exists, its properties will be loaded and status will be ``exists``. If it doesn't exist, status will be ``notexists`` and you can create it with ``asset.create()``.
 
-### create()
+#### create()
 
 ```js
 asset.amount = Int();   // Required
@@ -161,12 +400,11 @@ asset.create().then(() => {
 });
 ```
 
-# ``Transaction``
+## ``Transaction``
 
 ```js
-const Tokium = require('sdk-node');
-let Transaction = Tokium.Transaction();
-let transaction = new Transaction();
+import Tokium from 'sdk-node';
+const transaction = new Tokium.Transaction();
 ```
 
 **Transaction Data Model**
@@ -192,9 +430,9 @@ Transaction {
 | waiting | Transaction exists on database but it is waiting to be sent completed. Need to do initTransaction() with ``signOnline = true``. |
 | completed | Transaction is completed. Nothing more to do. |
 
-## Methods
+### Methods
 
-### init()
+#### init()
 
 ```js
 transaction.init(txData).then(() => {
@@ -227,7 +465,7 @@ txData = {
 
 Allows to start a new transaction.
 
-### requestTransaction()
+#### requestTransaction()
 
 ```js
 transaction.requestTransaction().then(() => {
@@ -239,7 +477,7 @@ transaction.requestTransaction().then(() => {
 
 Register the transaction on database but it isn't sended to blockchain. Very usefull to request transactions to other users.
 
-### initTransaction()
+#### initTransaction()
 
 ```js
 transaction.initTransaction(wallet, signOnline).then(() => {
@@ -271,12 +509,11 @@ If ``true``, the transaction will be signed online with ``wallet.privateKey`` an
 
 NOTE: For the moment, only ``true`` is supported.
 
-# ``Wallet``
+## ``Wallet``
 
 ```js
-const Tokium = require('sdk-node');
-let Wallet = Tokium.Wallet();
-let wallet = new Wallet();
+import Tokium from 'sdk-node';
+const wallet = new Tokium.Wallet();
 ```
 
 **Wallet Data Model**
@@ -299,9 +536,9 @@ Wallet {
 | needlogin | Need to do init() or create(). |
 | initiated | Wallet is initiated and you can use it. |
 
-## Methods
+### Methods
 
-### init()
+#### init()
 
 ```js
 wallet.init(walletData).then(() => {
@@ -334,7 +571,7 @@ walletData = {
 }
 ```
 
-### create()
+#### create()
 
 ```js
 wallet.create(assetName, walletPin).then(() => {
@@ -344,7 +581,7 @@ wallet.create(assetName, walletPin).then(() => {
 });
 ```
 
-### update()
+#### update()
 
 ```js
 wallet.update().then(() => {
