@@ -1,5 +1,5 @@
 
-# General description
+# 1. General description
 
 Tokium is a SDK that allows to develop blockchain based apps easily without a big technical knowledge of blockchain. Tokium uses a private blockchain hosted on AWS and hosts all assets inside this network.
 
@@ -13,7 +13,7 @@ At this moment, Tokium supports these features:
 
 On this guide, we will all Tokium current features. If you need help with our SDK you can contact us on [hello@tokium.one](mailto:hello@tokium.one).
 
-## User Dashboard - Create Asset
+## 1.1 User Dashboard - Create Asset
 
 The first step to use Tokium SDK is create an account and a new asset. You can create a new Tokium account on our [User Dashboard](https://profile.tokium.one). Click Sign Up and create a new account. All account are limited to create only one new asset. If you need to extend your quota, you can contact with us on [hello@tokium.one](mailto:hello@tokium.one).
 
@@ -21,7 +21,7 @@ With your account registered, you can create your first asset. You only have to 
 
 You can see now your new wallet on **My Wallets** section.
 
-## Environment
+## 1.2 Environment
 
 Tokium has been developed to be compatible with React and React Native. You can use the SDK with more platforms, but we don't guarantee the correct behavior. We will integrate Tokium on more platforms in the future.
 
@@ -50,9 +50,9 @@ currentUser.login('email@email.com', 'password').then(() => {
 });
 ```
 
-## Tokium SDK features
+## 1.3 Tokium SDK features
 
-### Create new account
+### 1.3.1 Create new account
 
 ```js
 import Tokium from 'sdk-node';
@@ -65,7 +65,7 @@ profile.signup('email@email.com', 'password').then(() => {
 });
 ```
 
-### Login
+### 1.3.2 Login
 
 ```js
 import Tokium from 'sdk-node';
@@ -78,7 +78,7 @@ currentUser.login('email@email.com', 'password').then(() => {
 });
 ```
 
-### Logout
+### 1.3.3 Logout
 
 ```js
 import Tokium from 'sdk-node';
@@ -91,7 +91,7 @@ currentUser.logout().then(() => {
 });
 ```
 
-### Get your wallets
+### 1.3.4 Get your wallets
 
 ```js
 import Tokium from 'sdk-node';
@@ -100,7 +100,7 @@ const currentUser = Tokium.currentUser;
 console.info(currentUser.wallets);
 ```
 
-### Create new wallet
+### 1.3.5 Create new wallet
 
 ```js
 import Tokium from 'sdk-node';
@@ -128,7 +128,7 @@ Wallet {
 
 **IMPORTANT**: Private Key is not saved on our systems, it's your responsibility to save it on a safe place.  You can save it on your local storage with ``Secure wallet keys inside secure storage`` Tokium SDK Feature. You can read about it on the next point.
 
-### Secure wallet keys inside secure storage
+### 1.3.6 Secure wallet keys inside secure storage
 
 This feature allows you to save private keys on a safe place inside your mobile. Your keys will be saved locally. If you change your mobile, you need to transfer the keys to the new device.
 
@@ -191,7 +191,7 @@ class StorageMock {
 }
 ```
 
-### Make transactions
+### 1.3.7 Make transactions
 
 Transactions are composed of to steps. The first step is to report the transaction to our systems. The second step is to sign the transaction.
 
@@ -226,7 +226,7 @@ transaction.init(txData).then(() => {
 });
 ```
 
-# Advanced documentation
+# 2 Advanced documentation
 
 ## ``Profile``
 
