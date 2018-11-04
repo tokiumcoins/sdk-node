@@ -12,6 +12,14 @@ const on = (...args) => {
     eventsEmitter.on(...args);
 };
 
+const off = (...args) => {
+    eventsEmitter.off(...args);
+};
+
+const once = (...args) => {
+    eventsEmitter.once(...args);
+};
+
 module.exports = {
     Asset:          Asset,
     Profile:        Profile,
@@ -19,5 +27,7 @@ module.exports = {
     Wallet:         Wallet,
     Tools:          Tools,
     currentUser:    new Profile(),
-    on:             on
+    on:             on,
+    off:            off,
+    once:           once
 };

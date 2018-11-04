@@ -27,9 +27,9 @@ Tokium has been developed to be compatible with React and React Native. You can 
 
 To integrate Tokium SDK on your project you need to start a new React  / React Native app. You can check React / React Native documentation on the next links:
 
-[https://github.com/facebook/create-react-app](https://github.com/facebook/create-react-app)
-[https://github.com/react-community/create-react-native-app](https://github.com/react-community/create-react-native-app)
-[https://expo.io/learn](https://expo.io/learn)
+- [https://github.com/facebook/create-react-app](https://github.com/facebook/create-react-app)
+- [https://github.com/react-community/create-react-native-app](https://github.com/react-community/create-react-native-app)
+- [https://expo.io/learn](https://expo.io/learn)
 
 Then, you need to install Tokium SDK:
 
