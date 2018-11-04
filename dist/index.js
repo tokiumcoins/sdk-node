@@ -33,6 +33,14 @@ var on = function on() {
 }; // Fix for react-native
 
 
+var off = function off() {
+    _services.eventsEmitter.off.apply(_services.eventsEmitter, arguments);
+};
+
+var once = function once() {
+    _services.eventsEmitter.once.apply(_services.eventsEmitter, arguments);
+};
+
 module.exports = {
     Asset: _asset2.default,
     Profile: _profile2.default,
@@ -40,5 +48,7 @@ module.exports = {
     Wallet: _wallet2.default,
     Tools: Tools,
     currentUser: new _profile2.default(),
-    on: on
+    on: on,
+    off: off,
+    once: once
 };
