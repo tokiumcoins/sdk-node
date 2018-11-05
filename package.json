@@ -19,11 +19,11 @@
   },
   "homepage": "https://gitlab.com/Tokium/sdk-node#README",
   "dependencies": {
-    "@firebase/app": "^0.3.3",
-    "@firebase/auth": "^0.7.4",
+    "@firebase/app": "^0.3.4",
+    "@firebase/auth": "^0.7.8",
     "@firebase/firestore": "^0.7.2",
     "cross-fetch": "^2.2.2",
-    "events": "^2.0.0"
+    "events": "^3.0.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
