@@ -193,7 +193,7 @@ class StorageMock {
 
 ### 1.3.7 Make transactions
 
-Transactions are composed of to steps. The first step is to report the transaction to our systems. The second step is to sign the transaction.
+Transactions are composed of two steps. The first step is to report the transaction to our systems. The second step is to sign the transaction.
 
 This two steps can be done from different devices. One user can request a payment and other can sign and complete it.
 
@@ -225,6 +225,26 @@ transaction.init(txData).then(() => {
     console.error('Error initializing transaction', err);
 });
 ```
+
+### 1.3.8 Generate pkpass of new wallet
+
+*From Node.js:*
+```js
+import Tokium from 'sdk-node';
+
+const wallet = new Tokium.Wallet();
+wallet.create('your-asset-name', '').then(() => {
+    wallet.getPassbook().then(() => {
+        // Passbook saved
+    })
+}).catch(err => {
+    console.error(err);
+});
+```
+
+*Direct download:*
+GET: https://api.tokium.one/test/wallet/passbook/[your-asset-name]/[wallet-address]
+Header: authtoken [firebase-auth-token]
 
 # 2 Advanced documentation
 
