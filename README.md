@@ -234,7 +234,7 @@ import Tokium from 'sdk-node';
 
 const wallet = new Tokium.Wallet();
 wallet.create('your-asset-name', '').then(() => {
-    wallet.getPassbook().then(() => {
+    wallet.getPassbook(path).then(() => {
         // Passbook saved
     })
 }).catch(err => {

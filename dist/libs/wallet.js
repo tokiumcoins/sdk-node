@@ -211,14 +211,14 @@ var Wallet = function () {
         }
     }, {
         key: 'getPassbook',
-        value: function getPassbook() {
+        value: function getPassbook(path) {
             var _this8 = this;
 
             return new Promise(function (resolve, reject) {
                 TokiumAPI.walletPassbook(_this8.asset.server, {
                     assetName: _this8.asset.assetName,
                     address: _this8.address
-                }).then(function () {
+                }, path).then(function () {
                     resolve();
                 }).catch(function (err) {
                     reject(err);

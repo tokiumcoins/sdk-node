@@ -173,12 +173,12 @@ export default class Wallet {
         });
     }
 
-    getPassbook() {
+    getPassbook(path) {
         return new Promise((resolve, reject) => {
             TokiumAPI.walletPassbook(this.asset.server, {
                 assetName: this.asset.assetName,
                 address: this.address
-            }).then(() => {
+            }, path).then(() => {
                 resolve();
             }).catch(err => {
                 reject(err);

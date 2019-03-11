@@ -48,7 +48,7 @@ var walletBalance = function walletBalance(host, data) {
     });
 };
 
-var walletPassbook = function walletPassbook(host, data) {
+var walletPassbook = function walletPassbook(host, data, path) {
     return new Promise(function (resolve, reject) {
         if (!data.assetName || !data.address) {
             reject('Empty params.');
@@ -63,8 +63,7 @@ var walletPassbook = function walletPassbook(host, data) {
         };
 
         fetch(uri, options).then(function (res) {
-            var dest = '/Users/jorge.prudencio/Desktop/blockchain/test/sdk-node-test/passbook.pkpass';
-            var fileStream = fs.createWriteStream(dest);
+            var fileStream = fs.createWriteStream(path);
 
             res.body.pipe(fileStream);
 

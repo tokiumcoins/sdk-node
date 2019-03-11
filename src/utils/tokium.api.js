@@ -46,7 +46,7 @@ const walletBalance = (host, data) => {
     });
 }
 
-const walletPassbook = (host, data) => {
+const walletPassbook = (host, data, path) => {
     return new Promise((resolve, reject) => {
         if (!data.assetName || !data.address) {
             reject('Empty params.');
@@ -61,8 +61,7 @@ const walletPassbook = (host, data) => {
         };
 
         fetch(uri, options).then(res => {
-            const dest = '/Users/jorge.prudencio/Desktop/blockchain/test/sdk-node-test/passbook.pkpass'
-            const fileStream = fs.createWriteStream(dest);
+            const fileStream = fs.createWriteStream(path);
 
             res.body.pipe(fileStream);
 
