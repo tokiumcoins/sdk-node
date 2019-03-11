@@ -2,74 +2,108 @@ require('cross-fetch/polyfill');
 
 var authorizationToken = null;
 
-function walletCreate(host, data) {
-    return new Promise(function(resolve, reject) {
+const walletCreate = (host, data) => {
+    return new Promise((resolve, reject) => {
         if (!data.assetName || ( !data.walletPin && data.walletPin !== '' )) {
             reject('Empty params.');
             return;
         }
 
-        var uri = host + '/wallet/create';
+        var uri = `${host}/wallet/create`;
 
-        post(uri, data).then(function(result) {
+        post(uri, data).then(result => {
             if (!result.success) {
                 reject(result.message);
                 return;
             }
 
             resolve(result.data);
-        }).catch(function() {
+        }).catch(() => {
             reject('There was an error requesting to tokium API.');
         });
     });
 }
 
-function walletBalance(host, data) {
-    return new Promise(function(resolve, reject) {
+const walletBalance = (host, data) => {
+    return new Promise((resolve, reject) => {
         if (!data.assetName || !data.address) {
             reject('Empty params.');
             return;
         }
 
-        var uri = host + '/wallet/balance/' + data.assetName + '/' + data.address;
+        var uri = `${host}/wallet/balance/${data.assetName}/${data.address}`;
 
-        get(uri).then(function(result) {
+        get(uri).then(result => {
             if (!result.success) {
                 reject(result.message);
                 return;
             }
 
             resolve(result.data);
-        }).catch(function() {
+        }).catch(() => {
             reject('There was an error requesting to tokium API.');
         });
     });
 }
 
-function transactionRequest(host, data) {
-    return new Promise(function(resolve, reject) {
+const walletPassbook = (host, data) => {
+    return new Promise((resolve, reject) => {
+        if (!data.assetName || !data.address) {
+            reject('Empty params.');
+            return;
+        }
+
+        const uri = `${host}/wallet/passbook/${data.assetName}/${data.address}`;
+        const options = {
+            headers: {
+                authToken: authorizationToken
+            }
+        };
+
+        fetch(uri, options).then(res => {
+            const dest = '/Users/jorge.prudencio/Desktop/blockchain/test/sdk-node-test/passbook.pkpass'
+            const fileStream = fs.createWriteStream(dest);
+
+            res.body.pipe(fileStream);
+
+            res.body.on('error', (err) => {
+                reject(err);
+            });
+
+            fileStream.on('finish', () => {
+                resolve();
+            });
+        }).catch(err => {
+            console.error(err);
+            resolve(err);
+        });
+    });
+};
+
+const transactionRequest = (host, data) => {
+    return new Promise((resolve, reject) => {
         if (!data.fromAddress || !data.toAddress || !data.assetName || !data.amount) {
             reject('Empty params.');
             return;
         }
 
-        var uri = host + '/transaction/request';
+        var uri = `${host}/transaction/request`;
 
-        post(uri, data).then(function(result) {
+        post(uri, data).then(result => {
             if (!result.success) {
                 reject(result.message);
                 return;
             }
 
             resolve(result.data);
-        }).catch(function() {
+        }).catch(() => {
             reject('There was an error requesting to tokium API.');
         });
     });
 }
 
-function transactionInitExplicit(host, data) {
-    return new Promise(function(resolve, reject) {
+const transactionInitExplicit = (host, data) => {
+    return new Promise((resolve, reject) => {
         if (!data.transactionInfo || data.signOnline === undefined) {
             reject('Empty params.');
             return;
@@ -80,89 +114,89 @@ function transactionInitExplicit(host, data) {
             return;
         }
 
-        var uri = host + '/transaction/init';
+        var uri = `${host}/transaction/init`;
 
-        post(uri, data).then(function(result) {
+        post(uri, data).then(result => {
             if (!result.success) {
                 reject(result.message);
                 return;
             }
 
             resolve(result.data);
-        }).catch(function() {
+        }).catch(() => {
             reject('There was an error requesting to tokium API.');
         });
     });
 }
 
-function transactionInitImplicit(host, data) {
-    return new Promise(function(resolve, reject) {
+const transactionInitImplicit = (host, data) => {
+    return new Promise((resolve, reject) => {
         if (!data.transactionKey || data.signOnline === undefined) {
             reject('Empty params.');
             return;
         }
 
-        var uri = host + '/transaction/init';
+        var uri = `${host}/transaction/init`;
 
-        post(uri, data).then(function(result) {
+        post(uri, data).then(result => {
             if (!result.success) {
                 reject(result.message);
                 return;
             }
 
             resolve(result.data);
-        }).catch(function() {
+        }).catch(() => {
             reject('There was an error requesting to tokium API.');
         });
     });
 }
 
-function transactionSend(host, data) {
-    return new Promise(function(resolve, reject) {
+const transactionSend = (host, data) => {
+    return new Promise((resolve, reject) => {
         if (!data.transactionKey || !data.signedTxHex) {
             reject('Empty params.');
             return;
         }
 
-        var uri = host + '/transaction/send';
+        var uri = `${host}/transaction/send`;
 
-        post(uri, data).then(function(result) {
+        post(uri, data).then(result => {
             if (!result.success) {
                 reject(result.message);
                 return;
             }
 
             resolve(result.data);
-        }).catch(function() {
+        }).catch(() => {
             reject('There was an error requesting to tokium API.');
         });
     });
 }
 
-function assetCreate(host, data) {
-    return new Promise(function(resolve, reject) {
+const assetCreate = (host, data) => {
+    return new Promise((resolve, reject) => {
         if (!data.assetName || !data.amount || !data.image) {
             reject('Empty params.');
             return;
         }
 
-        var uri = host + '/asset/create';
+        var uri = `${host}/asset/create`;
 
-        post(uri, data).then(function(result) {
+        post(uri, data).then(result => {
             if (!result.success) {
                 reject(result.message);
                 return;
             }
 
             resolve(result.data);
-        }).catch(function() {
+        }).catch(() => {
             reject('There was an error requesting to tokium API.');
         });
     });
 }
 
-function assetReissuance(host, data) {
-    return new Promise(function(resolve, reject) {
+const assetReissuance = (host, data) => {
+    return new Promise((resolve, reject) => {
         if (!data.privateKey || !data.transactionInfo) {
             reject('Empty params.');
             return;
@@ -173,41 +207,43 @@ function assetReissuance(host, data) {
             return;
         }
 
-        var uri = host + '/asset/reissuance';
+        var uri = `${host}/asset/reissuance`;
 
-        post(uri, data).then(function(result) {
+        post(uri, data).then(result => {
             if (!result.success) {
                 reject(result.message);
                 return;
             }
 
             resolve(result.data);
-        }).catch(function() {
+        }).catch(() => {
             reject('There was an error requesting to tokium API.');
         });
     });
 }
 
-function get(uri) {
-    return new Promise(function(resolve, reject) {
+const get = uri => {
+    return new Promise((resolve, reject) => {
         var options = {
             headers: {
                 authToken: authorizationToken
             }
         };
 
-        fetch(uri, options).then(function(res) {
-            res.text().then(function(text) {
-                resolve(JSON.parse(text));
+        fetch(uri, options).then(res => {
+            res.text().then(text => {
+                if (isJson(text)) return resolve(JSON.parse(text));
+                resolve(text);
             });
-        }).catch(function(err) {
+        }).catch(err => {
+            console.error(err);
             resolve(err);
         });
     });
 }
 
-function post(uri, body) {
-    return new Promise(function(resolve, reject) {
+const post = (uri, body) => {
+    return new Promise((resolve, reject) => {
         var options = {
             method: 'POST',
             headers: {
@@ -217,17 +253,17 @@ function post(uri, body) {
             body: JSON.stringify(body)
         };
 
-        fetch(uri, options).then(function(res) {
-            res.text().then(function(text) {
+        fetch(uri, options).then(res => {
+            res.text().then(text => {
                 resolve(JSON.parse(text));
             });
-        }).catch(function(err) {
+        }).catch(err => {
             resolve(err);
         });
     });
 }
 
-function isJson(str) {
+const isJson = str => {
     try {
         JSON.parse(str);
     } catch (e) {
@@ -236,13 +272,14 @@ function isJson(str) {
     return true;
 }
 
-function setAuthToken(authToken) {
+const setAuthToken = authToken => {
     authorizationToken = authToken;
 }
 
 module.exports = {
     walletCreate,
     walletBalance,
+    walletPassbook,
     transactionRequest,
     transactionInitExplicit,
     transactionInitImplicit,

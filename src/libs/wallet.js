@@ -173,6 +173,19 @@ export default class Wallet {
         });
     }
 
+    getPassbook() {
+        return new Promise((resolve, reject) => {
+            TokiumAPI.walletPassbook(this.asset.server, {
+                assetName: this.asset.assetName,
+                address: this.address
+            }).then(() => {
+                resolve();
+            }).catch(err => {
+                reject(err);
+            });
+        });
+    }
+
     _reset() {
         this.walletPin       = null;
         this.privateKey      = null;

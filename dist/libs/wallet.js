@@ -210,6 +210,22 @@ var Wallet = function () {
             });
         }
     }, {
+        key: 'getPassbook',
+        value: function getPassbook() {
+            var _this8 = this;
+
+            return new Promise(function (resolve, reject) {
+                TokiumAPI.walletPassbook(_this8.asset.server, {
+                    assetName: _this8.asset.assetName,
+                    address: _this8.address
+                }).then(function () {
+                    resolve();
+                }).catch(function (err) {
+                    reject(err);
+                });
+            });
+        }
+    }, {
         key: '_reset',
         value: function _reset() {
             this.walletPin = null;
@@ -222,24 +238,24 @@ var Wallet = function () {
     }, {
         key: '_getWalletBalance',
         value: function _getWalletBalance() {
-            var _this8 = this;
+            var _this9 = this;
 
             return new Promise(function (resolve, reject) {
-                if (!_this8.asset.server || !_this8.asset.assetName || !_this8.address) {
-                    _this8.balance = '...';
+                if (!_this9.asset.server || !_this9.asset.assetName || !_this9.address) {
+                    _this9.balance = '...';
                     resolve();
                     return;
                 }
 
-                TokiumAPI.walletBalance(_this8.asset.server, {
-                    assetName: _this8.asset.assetName,
-                    address: _this8.address
+                TokiumAPI.walletBalance(_this9.asset.server, {
+                    assetName: _this9.asset.assetName,
+                    address: _this9.address
                 }).then(function (balanceData) {
-                    _this8.balance = balanceData ? balanceData.balance : '...';
+                    _this9.balance = balanceData ? balanceData.balance : '...';
 
                     resolve();
                 }).catch(function (err) {
-                    _this8.balance = '...';
+                    _this9.balance = '...';
 
                     resolve();
                 });
