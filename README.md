@@ -228,7 +228,8 @@ transaction.init(txData).then(() => {
 
 ### 1.3.8 Generate pkpass of new wallet
 
-*From Node.js:*
+**From Node.js:**
+
 ```js
 import Tokium from 'sdk-node';
 
@@ -242,9 +243,10 @@ wallet.create('your-asset-name', '').then(() => {
 });
 ```
 
-*Direct download:*
-GET: https://api.tokium.one/test/wallet/passbook/[your-asset-name]/[wallet-address]
-Header: authtoken [firebase-auth-token]
+**Direct download:**
+
+- GET: https://api.tokium.one/test/wallet/passbook/[your-asset-name]/[wallet-address]
+- Header: authtoken [firebase-auth-token]
 
 # 2 Advanced documentation
 
