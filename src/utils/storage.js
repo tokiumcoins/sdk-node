@@ -1,8 +1,8 @@
 let Expo = null;
 
-try {
-    Expo = require('expo');
-} catch(e) {}
+// try {
+//     Expo = require('expo');
+// } catch(e) {}
 
 const AsyncStorage = global.AsyncStorage || null;
 const localStorage = global.localStorage || null;
