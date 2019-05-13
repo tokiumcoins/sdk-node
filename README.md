@@ -34,7 +34,13 @@ To integrate Tokium SDK on your project you need to start a new React  / React N
 Then, you need to install Tokium SDK:
 
 ```sh
-npm install --save https://gitlab.com/Tokium/sdk-node.git
+npm i --save @tokiumcoins/sdk-node
+```
+
+or 
+
+```sh
+yarn add @tokiumcoins/sdk-node
 ```
 
 With NPM dependency installed, you can start to use Tokium SDK on your React / React Native app:
