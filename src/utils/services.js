@@ -17,8 +17,6 @@ tokiumFirebase.initializeApp(FIREBASE_CONFIG);
 
 // Init tokiumFirestore.
 const tokiumFirestore = tokiumFirebase.firestore();
-const settings = { timestampsInSnapshots: true };
-tokiumFirestore.settings(settings);
 
 export const firebase = tokiumFirebase;
 export const firestore = tokiumFirestore;

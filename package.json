@@ -19,9 +19,9 @@
   },
   "homepage": "https://github.com/tokiumcoins/tokium-sdk#README",
   "dependencies": {
-    "@firebase/app": "^0.3.17",
-    "@firebase/auth": "^0.7.9",
-    "@firebase/firestore": "^0.7.2",
+    "@firebase/app": "^0.4.1",
+    "@firebase/auth": "^0.11.2",
+    "@firebase/firestore": "^1.3.1",
     "cross-fetch": "^2.2.2",
     "events": "^3.0.0",
     "babel-cli": "^6.26.0",
