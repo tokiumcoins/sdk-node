@@ -6,8 +6,7 @@
   "module": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "babel --presets es2015 src -d dist",
-    "postinstall": "npm install @firebase/app && npm install @firebase/auth && npm install @firebase/firestore"
+    "postinstall": "babel src -d dist"
   },
   "repository": {
     "type": "git",
@@ -24,10 +23,11 @@
     "@firebase/auth": "^0.7.9",
     "@firebase/firestore": "^0.7.2",
     "cross-fetch": "^2.2.2",
-    "events": "^3.0.0"
-  },
-  "devDependencies": {
+    "events": "^3.0.0",
     "babel-cli": "^6.26.0",
     "babel-preset-es2015": "^6.24.1"
+  },
+  "babel": {
+    "presets": [ "es2015" ]
   }
 }
