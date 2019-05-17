@@ -1,6 +1,6 @@
 {
-  "name": "@tokiumcoins/sdk-node",
-  "version": "0.0.2",
+  "name": "@tokium/tokium-sdk",
+  "version": "0.0.4",
   "description": "",
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://gitlab.com/Tokium/sdk-node.git"
+    "url": "git+https://github.com/tokiumcoins/tokium-sdk.git"
   },
   "author": "Tokium team",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/tokiumcoins/sdk-node/issues"
+    "url": "https://github.com/tokiumcoins/tokium-sdk/issues"
   },
-  "homepage": "https://github.com/tokiumcoins/sdk-node#README",
+  "homepage": "https://github.com/tokiumcoins/tokium-sdk#README",
   "dependencies": {
     "@firebase/app": "^0.3.17",
     "@firebase/auth": "^0.7.9",
