@@ -1,3 +1,6 @@
+# Test Tokium SDK!
+
+Do you want to test Tokium SDK? Send us an email to [hello@tokium.one](mailto:hello@tokium.one) and we will enable you our test environment.
 
 # 1. General description
 
@@ -10,8 +13,9 @@ At this moment, Tokium supports these features:
 - Create new wallets.
 - Secure wallet keys inside secure storage.
 - Make transactions.
+- Generate a Passbook of your wallet.
 
-On this guide, we will all Tokium current features. If you need help with our SDK you can contact us on [hello@tokium.one](mailto:hello@tokium.one).
+On this guide, we will expose all Tokium current features. If you need help with our SDK you can contact us on [hello@tokium.one](mailto:hello@tokium.one).
 
 ## 1.1 User Dashboard - Create Asset
 
