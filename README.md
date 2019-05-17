@@ -17,13 +17,9 @@ At this moment, Tokium supports these features:
 
 On this guide, we will expose all Tokium current features. If you need help with our SDK you can contact us on [hello@tokium.one](mailto:hello@tokium.one).
 
-## 1.1 User Dashboard - Create Asset
+## 1.1 Create Asset
 
-The first step to use Tokium SDK is create an account and a new asset. You can create a new Tokium account on our [User Dashboard](https://profile.tokium.one). Click Sign Up and create a new account. All account are limited to create only one new asset. If you need to extend your quota, you can contact with us on [hello@tokium.one](mailto:hello@tokium.one).
-
-With your account registered, you can create your first asset. You only have to go to [New Asset](https://profile.tokium.one/newasset) and insert your **Asset Name**, **the amount of asset that you will create** (you can create more in the feature), and a **URL to the background image of your asset card**. **When you click on Create, you will receive your Address and Private key. Save them on a safe place. You won't recover Private key and you need it to create more assets in the future and make transactions from your wallet.**
-
-You can see now your new wallet on **My Wallets** section.
+If you want to create a new asset and exchange it with Tokium, mail us to [hello@tokium.one](mailto:hello@tokium.one).
 
 ## 1.2 Environment
 
