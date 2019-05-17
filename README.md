@@ -46,11 +46,12 @@ yarn add @tokium/tokium-sdk
 With NPM dependency installed, you can start to use Tokium SDK on your React / React Native app:
 
 ```js
-import Tokium from 'sdk-node';
+const Tokium = require('@tokium/tokium-sdk');
 
 const currentUser = Tokium.currentUser;
+
 currentUser.login('email@email.com', 'password').then(() => {
-    console.info(profile);
+    console.info(currentUser);
 }).catch(err => {
     console.error(err);
 });
@@ -61,11 +62,12 @@ currentUser.login('email@email.com', 'password').then(() => {
 ### 1.3.1 Create new account
 
 ```js
-import Tokium from 'sdk-node';
+const Tokium = require('@tokium/tokium-sdk');
 
-const profile = new Tokium.Profile();
-profile.signup('email@email.com', 'password').then(() => {
-    console.info(profile);
+const newProfile = new Tokium.Profile();
+
+newProfile.signup('email@email.com', 'password').then(() => {
+    console.info(newProfile);
 }).catch(err => {
     console.error(err);
 });
@@ -74,9 +76,10 @@ profile.signup('email@email.com', 'password').then(() => {
 ### 1.3.2 Login
 
 ```js
-import Tokium from 'sdk-node';
+const Tokium = require('@tokium/tokium-sdk');
 
 const currentUser = Tokium.currentUser;
+
 currentUser.login('email@email.com', 'password').then(() => {
     console.info(currentUser);
 }).catch(err => {
@@ -87,9 +90,10 @@ currentUser.login('email@email.com', 'password').then(() => {
 ### 1.3.3 Logout
 
 ```js
-import Tokium from 'sdk-node';
+const Tokium = require('@tokium/tokium-sdk');
 
 const currentUser = Tokium.currentUser;
+
 currentUser.logout().then(() => {
     console.info(currentUser);
 }).catch(err => {
@@ -100,7 +104,7 @@ currentUser.logout().then(() => {
 ### 1.3.4 Get your wallets
 
 ```js
-import Tokium from 'sdk-node';
+const Tokium = require('@tokium/tokium-sdk');
 
 const currentUser = Tokium.currentUser;
 console.info(currentUser.wallets);
@@ -109,9 +113,10 @@ console.info(currentUser.wallets);
 ### 1.3.5 Create new wallet
 
 ```js
-import Tokium from 'sdk-node';
+const Tokium = require('@tokium/tokium-sdk');
 
 const wallet = new Tokium.Wallet();
+
 wallet.create('your-asset-name', '').then(() => {
     console.info(wallet);
 }).catch(err => {
@@ -155,7 +160,7 @@ wallet.savePrivateKey(wallet.privateKey).then(() => {
 Only works if you have saved privateKey before.
 
 ```js
-wallet.savePrivateKey().then(() => {
+wallet.getPrivateKey().then(() => {
     console.info(wallet);
 }).catch(err => {
     console.error(err);
@@ -204,9 +209,9 @@ Transactions are composed of two steps. The first step is to report the transact
 This two steps can be done from different devices. One user can request a payment and other can sign and complete it.
 
 ```js
-import Tokium from 'sdk-node';
+const Tokium = require('@tokium/tokium-sdk');
 
-const transaction = new Tokium.Transaction()
+const transaction = new Tokium.Transaction();
 
 const fromWallet = {
     address: '<from_wallet_address>',
@@ -219,7 +224,7 @@ const txData = {
     assetName: '<wallet_asset_name>',
     fromAddress: fromWallet.address,
     toAddress: '<to_wallet_address>'
-}
+};
 
 transaction.init(txData).then(() => {
     transaction.initTransaction(fromWallet, true).then(() => {
@@ -237,9 +242,10 @@ transaction.init(txData).then(() => {
 **From Node.js:**
 
 ```js
-import Tokium from 'sdk-node';
+const Tokium = require('@tokium/tokium-sdk');
 
 const wallet = new Tokium.Wallet();
+
 wallet.create('your-asset-name', '').then(() => {
     wallet.getPassbook(path).then(() => {
         // Passbook saved
@@ -259,7 +265,7 @@ wallet.create('your-asset-name', '').then(() => {
 ## ``Profile``
 
 ```js
-import Tokium from 'sdk-node';
+const Tokium = require('@tokium/tokium-sdk');
 const profile = new Tokium.Profile();
 ```
 
@@ -336,7 +342,7 @@ profile.getTransactions(type, limit).then(transactions => { // type = 'from' or 
 #### wallets-changed
 
 ```js
-import Tokium from 'sdk-node';
+const Tokium = require('@tokium/tokium-sdk');
 Tokium.on('wallets-changed', profile => {
     console.info(profile); // Profile()
 });
@@ -345,7 +351,7 @@ Tokium.on('wallets-changed', profile => {
 #### waiting-transactions-changed
 
 ```js
-import Tokium from 'sdk-node';
+const Tokium = require('@tokium/tokium-sdk');
 Tokium.on('waiting-transactions-changed', transactions => {
     console.info(transactions); // [ Transaction(), Transaction(), ... ]
 })
@@ -354,7 +360,7 @@ Tokium.on('waiting-transactions-changed', transactions => {
 #### profile-changed
 
 ```js
-import Tokium from 'sdk-node';
+const Tokium = require('@tokium/tokium-sdk');
 Tokium.on('profile-changed', profile => {
     console.info(profile); // Profile()
 })
@@ -363,7 +369,7 @@ Tokium.on('profile-changed', profile => {
 ## ``Asset``
 
 ```js
-import Tokium from 'sdk-node';
+const Tokium = require('@tokium/tokium-sdk');
 const asset = new Tokium.Asset();
 ```
 
@@ -540,7 +546,7 @@ NOTE: For the moment, only ``true`` is supported.
 ## ``Wallet``
 
 ```js
-import Tokium from 'sdk-node';
+const Tokium = require('@tokium/tokium-sdk');
 const wallet = new Tokium.Wallet();
 ```
 
