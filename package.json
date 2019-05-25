@@ -1,13 +1,13 @@
 {
   "name": "@tokium/tokium-sdk",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "babel --presets es2015 src -d dist",
-    "postinstall": "npm install @firebase/app && npm install @firebase/auth && npm install @firebase/firestore"
+    "prepublish": "babel src -d dist",
+    "build": "babel src -d dist"
   },
   "repository": {
     "type": "git",
@@ -20,14 +20,19 @@
   },
   "homepage": "https://github.com/tokiumcoins/tokium-sdk#README",
   "dependencies": {
-    "@firebase/app": "^0.3.17",
-    "@firebase/auth": "^0.7.9",
-    "@firebase/firestore": "^0.7.2",
+    "@firebase/app": "^0.4.1",
+    "@firebase/auth": "^0.11.2",
+    "@firebase/firestore": "^1.3.1",
     "cross-fetch": "^2.2.2",
     "events": "^3.0.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
-    "babel-preset-es2015": "^6.24.1"
+    "babel-preset-env": "^1.7.0"
+  },
+  "babel": {
+    "presets": [
+      "env"
+    ]
   }
 }
