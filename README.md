@@ -48,6 +48,12 @@ With NPM dependency installed, you can start to use Tokium SDK on your React / R
 ```js
 const Tokium = require('@tokium/tokium-sdk');
 
+const FIREBASE_CONFIG = {
+    // Firebase app configuration.
+};
+
+Tokium.initializeApp(FIREBASE_CONFIG);
+
 const currentUser = Tokium.currentUser;
 
 currentUser.login('email@email.com', 'password').then(() => {
