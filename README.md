@@ -2,6 +2,8 @@
 
 Do you want to test Tokium SDK? Send us an email to [hello@tokium.one](mailto:hello@tokium.one) and we will enable you our test environment.
 
+Visit us on: [www.tokium.one](https://www.tokium.one)
+
 # 1. General description
 
 Tokium is a SDK that allows to develop blockchain based apps easily without a big technical knowledge of blockchain. Tokium uses a private blockchain hosted on AWS and hosts all assets inside this network.
